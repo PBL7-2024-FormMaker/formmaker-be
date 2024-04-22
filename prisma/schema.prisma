@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CONNECTION_STRING")
+}
+
+model User {
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  password          String
+  username          String
+  avatarUrl         String?   @map("avatar_url")
+  organizationName  String?   @map("organization_name")
+  organizationLogo  String?   @map("organization_logo")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(3)
+  passwordChangedAt DateTime? @map("password_changed_at") @db.Timestamptz(3)
+  createdForms      Form[]    @relation("CreatedForms")
+  favouriteForms    Form[]    @relation("FavouriteForms")
+  createdFolders    Folder[]  @relation("CreatedFolders")
+  createdTeams      Team[]    @relation("CreatedTeams")
+  teams             Team[]    @relation("TeamMembers")
+
+  @@map("users")
+}
+
+model Form {
+  id                Int        @id @default(autoincrement())
+  title             String
+  logoUrl           String?    @map("logo_url")
+  settings          Json
+  disabled          Boolean    @default(false)
+  totalSubmissions  Int        @default(0) @map("total_submissions")
+  elements          Json[]
+  permissions       Json?
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime?  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime?  @map("deleted_at") @db.Timestamptz(3)
+  creator           User       @relation("CreatedForms", fields: [creatorId], references: [id])
+  creatorId         Int        @map("creator_id")
+  favouritedByUsers User[]     @relation("FavouriteForms")
+  folder            Folder?    @relation(fields: [folderId], references: [id])
+  folderId          Int?       @map("folder_id")
+  team              Team?      @relation(fields: [teamId], references: [id])
+  teamId            Int?       @map("team_id")
+  responses         Response[]
+
+  @@map("forms")
+}
+
+model Folder {
+  id          Int       @id @default(autoincrement())
+  name        String
+  permissions Json?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  creator     User      @relation("CreatedFolders", fields: [creatorId], references: [id])
+  creatorId   Int       @map("creator_id")
+  forms       Form[]
+  team        Team?     @relation(fields: [teamId], references: [id])
+  teamId      Int?
+
+  @@map("folders")
+}
+
+model Team {
+  id          Int       @id @default(autoincrement())
+  name        String
+  logoUrl     String?   @map("logo_url")
+  permissions Json?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  creator     User      @relation("CreatedTeams", fields: [creatorId], references: [id])
+  creatorId   Int       @map("creator_id")
+  forms       Form[]
+  members     User[]    @relation("TeamMembers")
+  folders     Folder[]
+
+  @@map("teams")
+}
+
+model Response {
+  id          Int       @id @default(autoincrement())
+  formAnswers Json[]
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  form        Form      @relation(fields: [formId], references: [id])
+  formId      Int       @map("form_id")
+
+  @@map("responses")
+}

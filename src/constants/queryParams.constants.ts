@@ -1,0 +1,21 @@
+export const SORT_FORM_FIELDS = {
+  TITLE: 'title',
+  CREATED_AT: 'createdAt',
+  UPDATED_AT: 'updatedAt',
+};
+
+export const SORT_FORM_DIRECTIONS = {
+  ASC: 'asc',
+  DESC: 'desc',
+};
+
+export const ALLOWED_SORT_FORM_FIELDS = [
+  SORT_FORM_FIELDS.TITLE,
+  SORT_FORM_FIELDS.CREATED_AT,
+  SORT_FORM_FIELDS.UPDATED_AT,
+];
+
+export const ALLOWED_SORT_FORM_DIRECTIONS = [
+  SORT_FORM_DIRECTIONS.ASC,
+  SORT_FORM_DIRECTIONS.DESC,
+];
