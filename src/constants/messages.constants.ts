@@ -30,6 +30,8 @@ export const USER_SUCCESS_MESSAGES = {
   DELETE_USER_SUCCESS: 'Delete user successfully',
   UPDATE_USER_SUCCESS: 'Update user successfully',
   CHANGE_PW_SUCCESS: 'Change password successfully',
+  SENT_EMAIL_SUCCESS: 'Email has been sent',
+  RESET_PASSWORD_SUCCESS: 'Password has been reset successfully',
 };
 
 export const USER_ERROR_MESSAGES = {
@@ -52,6 +54,8 @@ export const USER_ERROR_MESSAGES = {
   NO_EMPTY_USERNAME: 'Username cannot be empty',
   INCORRECT_PASSWORD: 'Incorrect password',
   INVALID_NEW_PASSWORD: 'New password must be different from your old password',
+  ERROR_SEND_EMAIL:
+    'There was an error sending password reset email. Please try again later',
 };
 
 export const FORM_SUCCESS_MESSAGES = {
