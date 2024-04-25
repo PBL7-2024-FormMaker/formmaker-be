@@ -18,7 +18,7 @@ import { isKeyOfObject } from './object.utils';
 
 const responsesService: ResponsesService = getResponsesService();
 
-export const findResponseById = async (responseId: number, res: Response) => {
+export const findResponseById = async (responseId: string, res: Response) => {
   const existingResponse = await responsesService.getResponseById(responseId);
   if (!existingResponse) {
     return errorResponse(
@@ -33,7 +33,7 @@ export const findResponseById = async (responseId: number, res: Response) => {
 export const convertRawResponseToExtraInfoResponse = (
   elementListByIdObject: Record<string, Prisma.JsonValue>,
   response: {
-    id: number;
+    id: string;
     formAnswers: Prisma.JsonValue[];
     createdAt: Date;
   },

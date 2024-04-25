@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PERMISSIONS } from '../types/permissions.types';
 
 export const canView = (
-  userId: number,
+  userId: string,
   permissionsObject: Prisma.JsonObject,
 ) => {
   if (!permissionsObject) return false;
@@ -15,7 +15,7 @@ export const canView = (
 };
 
 export const canEdit = (
-  userId: number,
+  userId: string,
   permissionsObject: Prisma.JsonObject,
 ) => {
   if (!permissionsObject) return false;
@@ -27,7 +27,7 @@ export const canEdit = (
 };
 
 export const canDelete = (
-  userId: number,
+  userId: string,
   permissionsObject: Prisma.JsonObject,
 ) => {
   if (!permissionsObject) return false;

@@ -17,7 +17,7 @@ export const checkTeamExistence = async (
 ) => {
   try {
     const { teamId } = req.params;
-    const existingTeam = await findTeamById(Number(teamId), res);
+    const existingTeam = await findTeamById(teamId, res);
     req.body.team = existingTeam;
     next();
   } catch (error) {

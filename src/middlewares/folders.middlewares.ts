@@ -9,7 +9,7 @@ export const checkFolderExistence = async (
 ) => {
   try {
     const { folderId } = req.params;
-    const existingFolder = await findFolderById(Number(folderId), res);
+    const existingFolder = await findFolderById(folderId, res);
     req.body.folder = existingFolder;
     next();
   } catch (error) {

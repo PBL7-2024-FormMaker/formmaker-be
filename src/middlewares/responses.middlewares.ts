@@ -9,7 +9,7 @@ export const checkResponseExistence = async (
 ) => {
   try {
     const { responseId } = req.params;
-    const existingResponse = await findResponseById(Number(responseId), res);
+    const existingResponse = await findResponseById(responseId, res);
     req.body.response = existingResponse;
     next();
   } catch (error) {

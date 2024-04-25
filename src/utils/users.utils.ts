@@ -8,7 +8,7 @@ import { errorResponse } from './messages.utils';
 
 const usersService: UsersService = getUsersService();
 
-export const findUserById = async (userId: number, res: Response) => {
+export const findUserById = async (userId: string, res: Response) => {
   const existingUser = await usersService.getUserByID(userId);
   if (!existingUser) {
     return errorResponse(

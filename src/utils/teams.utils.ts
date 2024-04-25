@@ -8,7 +8,7 @@ import { errorResponse } from './messages.utils';
 
 const teamsService: TeamsService = getTeamsService();
 
-export const findTeamById = async (teamId: number, res: Response) => {
+export const findTeamById = async (teamId: string, res: Response) => {
   const existingTeam = await teamsService.getTeamById(teamId);
   if (!existingTeam) {
     return errorResponse(

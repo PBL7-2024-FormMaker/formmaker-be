@@ -26,7 +26,7 @@ export class TeamsService {
     this.foldersService = getFoldersService();
   }
 
-  public getTeamsByUserId = (userId: number) =>
+  public getTeamsByUserId = (userId: string) =>
     prisma.team.findMany({
       where: {
         members: { some: { id: userId } },
@@ -55,7 +55,7 @@ export class TeamsService {
   public createTeam = (
     name: string,
     logoUrl: string | undefined,
-    userId: number,
+    userId: string,
   ) =>
     prisma.team.create({
       data: {
@@ -86,7 +86,7 @@ export class TeamsService {
       },
     });
 
-  public getTeamById = (teamId: number) =>
+  public getTeamById = (teamId: string) =>
     prisma.team.findUnique({
       where: {
         id: teamId,
@@ -113,7 +113,7 @@ export class TeamsService {
     });
 
   public updateTeam = (
-    teamId: number,
+    teamId: string,
     name: string | undefined,
     logoUrl: string | undefined,
   ) =>
@@ -127,7 +127,7 @@ export class TeamsService {
       },
     });
 
-  public deleteTeam = (teamId: number) =>
+  public deleteTeam = (teamId: string) =>
     prisma.$transaction(async (tx) => {
       // get all forms in team
       const formsInTeam = await tx.form.findMany({
@@ -168,7 +168,7 @@ export class TeamsService {
       });
     });
 
-  public checkMemberExistsInTeam = async (teamId: number, memberId: number) => {
+  public checkMemberExistsInTeam = async (teamId: string, memberId: string) => {
     const team = await prisma.team.findUnique({
       where: {
         id: teamId,
@@ -182,7 +182,7 @@ export class TeamsService {
     return team !== null;
   };
 
-  public checkFolderExistsInTeam = async (teamId: number, folderId: number) => {
+  public checkFolderExistsInTeam = async (teamId: string, folderId: string) => {
     const team = await prisma.team.findUnique({
       where: {
         id: teamId,
@@ -196,7 +196,7 @@ export class TeamsService {
     return team !== null;
   };
 
-  public addTeamMember = (teamId: number, memberId: number) =>
+  public addTeamMember = (teamId: string, memberId: string) =>
     prisma.$transaction(async (tx) => {
       // get current permissions in team
       const team = await tx.team.findUnique({
@@ -302,7 +302,7 @@ export class TeamsService {
       );
     });
 
-  public removeTeamMember = (teamId: number, memberIds: number[]) =>
+  public removeTeamMember = (teamId: string, memberIds: string[]) =>
     prisma.$transaction(async (tx) => {
       const team = await tx.team.findUnique({
         where: {

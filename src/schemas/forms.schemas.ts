@@ -750,16 +750,12 @@ export const GetFormsQueryParamsSchema = z
     sortDirection: z.string({
       invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
     }),
-    folderId: z
-      .number({
-        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
-      })
-      .positive(ERROR_MESSAGES.NUMBER_MUST_BE_POSITIVE),
-    teamId: z
-      .number({
-        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
-      })
-      .positive(ERROR_MESSAGES.NUMBER_MUST_BE_POSITIVE),
+    folderId: z.string({
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+    }),
+    teamId: z.string({
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+    }),
   })
   .strict()
   .partial();

@@ -22,7 +22,7 @@ export const getFormsService = () => {
 };
 
 export class FormsService {
-  public createForm = (userId: number, payload: CreateFormSchemaType) =>
+  public createForm = (userId: string, payload: CreateFormSchemaType) =>
     prisma.form.create({
       data: {
         title: payload.title,
@@ -41,8 +41,8 @@ export class FormsService {
     });
 
   public createFormInTeam = (
-    userId: number,
-    payload: CreateFormSchemaType & { teamId: number },
+    userId: string,
+    payload: CreateFormSchemaType & { teamId: string },
   ) =>
     prisma.$transaction(async (tx) => {
       const membersInTeam = await tx.team
@@ -95,8 +95,8 @@ export class FormsService {
     });
 
   public createFormInMyFolder = (
-    userId: number,
-    payload: CreateFormSchemaType & { folderId: number },
+    userId: string,
+    payload: CreateFormSchemaType & { folderId: string },
   ) =>
     prisma.form.create({
       data: {
@@ -121,8 +121,8 @@ export class FormsService {
     });
 
   public createFormInFolderOfTeam = (
-    userId: number,
-    payload: CreateFormSchemaType & { folderId: number; teamId: number },
+    userId: string,
+    payload: CreateFormSchemaType & { folderId: string; teamId: string },
   ) =>
     prisma.$transaction(async (tx) => {
       const membersInTeam = await tx.team
@@ -179,7 +179,7 @@ export class FormsService {
       return createdForm;
     });
 
-  public getFormsByUserId = (userId: number, args: GetFormsArgs) =>
+  public getFormsByUserId = (userId: string, args: GetFormsArgs) =>
     prisma.form.findMany({
       skip: args.offset,
       take: args.limit,
@@ -243,7 +243,7 @@ export class FormsService {
     });
 
   public getTotalFormsByUserId = (
-    userId: number,
+    userId: string,
     args: Pick<
       GetFormsArgs,
       'isDeleted' | 'isFavourite' | 'folderId' | 'teamId' | 'searchText'
@@ -292,14 +292,14 @@ export class FormsService {
       },
     });
 
-  public getFormById = (formId: number) =>
+  public getFormById = (formId: string) =>
     prisma.form.findUnique({
       where: {
         id: formId,
       },
     });
 
-  public updateForm = (formId: number, payload: UpdateFormSchemaType) =>
+  public updateForm = (formId: string, payload: UpdateFormSchemaType) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -312,7 +312,7 @@ export class FormsService {
       },
     });
 
-  public updateDisabledStatus = (formId: number, disabled: boolean) =>
+  public updateDisabledStatus = (formId: string, disabled: boolean) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -322,7 +322,7 @@ export class FormsService {
       },
     });
 
-  public softDeleteForm = (formId: number) =>
+  public softDeleteForm = (formId: string) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -332,7 +332,7 @@ export class FormsService {
       },
     });
 
-  public restoreForm = (formId: number) =>
+  public restoreForm = (formId: string) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -342,7 +342,7 @@ export class FormsService {
       },
     });
 
-  public hardDeleteForm = (formId: number) =>
+  public hardDeleteForm = (formId: string) =>
     prisma.$transaction(async (tx) => {
       await tx.response.deleteMany({
         where: {
@@ -357,7 +357,7 @@ export class FormsService {
       });
     });
 
-  public addToFavourites = (formId: number, userId: number) =>
+  public addToFavourites = (formId: string, userId: string) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -379,7 +379,7 @@ export class FormsService {
       },
     });
 
-  public removeFromFavourites = (formId: number, userId: number) =>
+  public removeFromFavourites = (formId: string, userId: string) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -406,8 +406,8 @@ export class FormsService {
       PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
       '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
     >,
-    formId: number,
-    memberIds: number[],
+    formId: string,
+    memberIds: string[],
   ) => {
     const form = await tx.form.findUnique({
       where: {
@@ -431,7 +431,7 @@ export class FormsService {
     });
   };
 
-  public addToFolder = (formId: number, folderId: number) =>
+  public addToFolder = (formId: string, folderId: string) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -445,7 +445,7 @@ export class FormsService {
       },
     });
 
-  public removeFromFolder = (formId: number) =>
+  public removeFromFolder = (formId: string) =>
     prisma.form.update({
       where: {
         id: formId,
@@ -457,7 +457,7 @@ export class FormsService {
       },
     });
 
-  public moveToTeam = (formId: number, teamId: number) =>
+  public moveToTeam = (formId: string, teamId: string) =>
     prisma.$transaction(async (tx) => {
       const membersInTeam = await tx.team
         .findUnique({
@@ -503,7 +503,7 @@ export class FormsService {
       });
     });
 
-  public moveBackToMyForms = (userId: number, formId: number, teamId: number) =>
+  public moveBackToMyForms = (userId: string, formId: string, teamId: string) =>
     prisma.$transaction(async (tx) => {
       const membersInTeam = await tx.team
         .findUnique({
