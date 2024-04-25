@@ -16,21 +16,21 @@ export const getUsersService = () => {
 export class UsersService {
   public getAllUsers = () => prisma.user.findMany();
 
-  public getUserByID = (id: number) =>
+  public getUserByID = (id: string) =>
     prisma.user.findUnique({
       where: {
         id,
       },
     });
 
-  public delUserByID = (id: number) =>
+  public delUserByID = (id: string) =>
     prisma.user.delete({
       where: {
         id,
       },
     });
 
-  public changePassword = (id: number, newPassword: string) =>
+  public changePassword = (id: string, newPassword: string) =>
     prisma.user.update({
       where: {
         id,
@@ -41,7 +41,7 @@ export class UsersService {
       },
     });
 
-  public updateUserByID = (id: number, user: UpdateUserSchemaType) =>
+  public updateUserByID = (id: string, user: UpdateUserSchemaType) =>
     prisma.user.update({
       where: {
         id,
@@ -55,7 +55,7 @@ export class UsersService {
       },
     });
 
-  public getFavouriteFormsOfUser = (userId: number) =>
+  public getFavouriteFormsOfUser = (userId: string) =>
     prisma.user
       .findUnique({
         where: {

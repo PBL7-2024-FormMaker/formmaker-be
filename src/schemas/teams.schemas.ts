@@ -43,7 +43,7 @@ export const AddTeamMemberSchema = z.object({
 
 export const RemoveTeamMemberSchema = z.object({
   memberIds: z
-    .number({
+    .string({
       required_error: ERROR_MESSAGES.REQUIRED_FIELD,
       invalid_type_error: ERROR_MESSAGES.REQUIRED_ARRAY_TYPE,
     })

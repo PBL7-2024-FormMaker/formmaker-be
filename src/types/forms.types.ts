@@ -6,8 +6,8 @@ export interface GetFormsArgs {
   isFavourite: boolean;
   sortField: string;
   sortDirection: string;
-  folderId?: number;
-  teamId?: number;
+  folderId?: string;
+  teamId?: string;
 }
 
 export enum ELEMENT_TYPE {

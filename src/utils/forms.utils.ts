@@ -8,7 +8,7 @@ import { errorResponse } from './messages.utils';
 
 const formsService: FormsService = getFormsService();
 
-export const findFormById = async (formId: number, res: Response) => {
+export const findFormById = async (formId: string, res: Response) => {
   const existingForm = await formsService.getFormById(formId);
   if (!existingForm) {
     return errorResponse(

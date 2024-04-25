@@ -8,7 +8,7 @@ import { errorResponse } from './messages.utils';
 
 const foldersService: FoldersService = getFoldersService();
 
-export const findFolderById = async (folderId: number, res: Response) => {
+export const findFolderById = async (folderId: string, res: Response) => {
   const existingFolder = await foldersService.getFolderById(folderId);
   if (!existingFolder) {
     return errorResponse(

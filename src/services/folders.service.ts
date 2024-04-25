@@ -17,7 +17,7 @@ export const getFoldersService = () => {
 };
 
 export class FoldersService {
-  public createFolder = (userId: number, name: string) =>
+  public createFolder = (userId: string, name: string) =>
     prisma.folder.create({
       data: {
         name,
@@ -33,8 +33,8 @@ export class FoldersService {
     });
 
   public createFolderInTeam = (
-    userId: number,
-    payload: CreateFolderSchemaType & { teamId: number },
+    userId: string,
+    payload: CreateFolderSchemaType & { teamId: string },
   ) =>
     prisma.$transaction(async (tx) => {
       const membersInTeam = await tx.team
@@ -83,7 +83,7 @@ export class FoldersService {
       return createdFolder;
     });
 
-  public getAllFoldersOfUser = (userId: number, teamId?: number | null) =>
+  public getAllFoldersOfUser = (userId: string, teamId?: string | null) =>
     prisma.folder.findMany({
       where: {
         creatorId: userId,
@@ -91,14 +91,14 @@ export class FoldersService {
       },
     });
 
-  public getTotalFoldersByUserId = (userId: number) =>
+  public getTotalFoldersByUserId = (userId: string) =>
     prisma.folder.count({
       where: {
         creatorId: userId,
       },
     });
 
-  public getFolderById = (folderId: number) =>
+  public getFolderById = (folderId: string) =>
     prisma.folder.findUnique({
       where: {
         id: folderId,
@@ -108,7 +108,7 @@ export class FoldersService {
       },
     });
 
-  public updateFolder = async (folderId: number, name?: string) =>
+  public updateFolder = async (folderId: string, name?: string) =>
     prisma.folder.update({
       where: { id: folderId },
       data: {
@@ -116,7 +116,7 @@ export class FoldersService {
       },
     });
 
-  public deleteFolder = async (folderId: number) =>
+  public deleteFolder = async (folderId: string) =>
     prisma.$transaction(async (tx) => {
       // Find all forms belong to the folder to be deleted
       const formsInFolder = await tx.form.findMany({
@@ -153,8 +153,8 @@ export class FoldersService {
       PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
       '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
     >,
-    folderId: number,
-    memberIds: number[],
+    folderId: string,
+    memberIds: string[],
   ) => {
     const folder = await tx.folder.findUnique({
       where: {

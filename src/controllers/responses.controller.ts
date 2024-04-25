@@ -171,7 +171,7 @@ export class ResponsesController {
   };
 
   public deleteMultipleResponses = async (
-    req: CustomRequest<{ responsesIds: number[]; form: Form }>,
+    req: CustomRequest<{ responsesIds: string[]; form: Form }>,
     res: ExpressResponse,
   ) => {
     try {
@@ -188,7 +188,7 @@ export class ResponsesController {
       const deletedResponses =
         await this.responsesService.deleteMultipleResponses(
           form.totalSubmissions,
-          parseInt(formId),
+          formId,
           responsesIds,
         );
 

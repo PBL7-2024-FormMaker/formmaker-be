@@ -14,7 +14,7 @@ export const getResponsesService = () => {
 export class ResponsesService {
   public createResponse = async (
     totalSubmissions: number,
-    formId: number,
+    formId: string,
     payload: CreatedResponseSchema,
   ) =>
     prisma.$transaction(async (tx) => {
@@ -29,8 +29,8 @@ export class ResponsesService {
 
   public deleteResponse = async (
     totalSubmissions: number,
-    formId: number,
-    responseId: number,
+    formId: string,
+    responseId: string,
   ) =>
     prisma.$transaction(async (tx) => {
       await tx.form.update({
@@ -44,7 +44,7 @@ export class ResponsesService {
       });
     });
 
-  public getResponseById = async (responseId: number) =>
+  public getResponseById = async (responseId: string) =>
     prisma.response.findUnique({
       where: {
         id: responseId,
@@ -52,8 +52,8 @@ export class ResponsesService {
     });
   public deleteMultipleResponses = async (
     totalSubmissions: number,
-    formId: number,
-    responsesIds: number[],
+    formId: string,
+    responsesIds: string[],
   ) =>
     prisma.$transaction(async (tx) => {
       await tx.form.update({

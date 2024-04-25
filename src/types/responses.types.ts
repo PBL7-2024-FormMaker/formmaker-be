@@ -1,7 +1,7 @@
 import type { SORT_DIRECTIONS } from '@/constants';
 
 export interface GetResponsesByFormIdParams {
-  formId: number;
+  formId: string;
   offset: number;
   limit: number;
   searchText: string;

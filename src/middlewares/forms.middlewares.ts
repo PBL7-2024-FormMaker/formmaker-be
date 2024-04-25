@@ -291,7 +291,7 @@ export const checkFormExistence = async (
 ) => {
   try {
     const { formId } = req.params;
-    const existingForm = await findFormById(Number(formId), res);
+    const existingForm = await findFormById(formId, res);
     req.body.form = existingForm;
     next();
   } catch (error) {
@@ -325,8 +325,8 @@ export const validateGetFormQueryParamsSchema = async (
       pageSize: pageSizeParam ? Number(pageSizeParam) : undefined,
       isDeleted: isDeletedParam ? Number(isDeletedParam) : undefined,
       isFavourite: isFavouriteParam ? Number(isFavouriteParam) : undefined,
-      folderId: folderIdParam ? Number(folderIdParam) : undefined,
-      teamId: teamIdParam ? Number(teamIdParam) : undefined,
+      folderId: folderIdParam ? folderIdParam : undefined,
+      teamId: teamIdParam ? teamIdParam : undefined,
     };
 
     const result = await validateData(GetFormsQueryParamsSchema, queryParams);

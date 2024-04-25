@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
+  id                String    @id @unique @default(cuid())
   email             String    @unique
   password          String
   username          String
@@ -32,7 +32,7 @@ model User {
 }
 
 model Form {
-  id                Int        @id @default(autoincrement())
+  id                String     @id @unique @default(cuid())
   title             String
   logoUrl           String?    @map("logo_url")
   settings          Json
@@ -44,35 +44,35 @@ model Form {
   updatedAt         DateTime?  @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt         DateTime?  @map("deleted_at") @db.Timestamptz(3)
   creator           User       @relation("CreatedForms", fields: [creatorId], references: [id])
-  creatorId         Int        @map("creator_id")
+  creatorId         String     @map("creator_id")
   favouritedByUsers User[]     @relation("FavouriteForms")
   folder            Folder?    @relation(fields: [folderId], references: [id])
-  folderId          Int?       @map("folder_id")
+  folderId          String?    @map("folder_id")
   team              Team?      @relation(fields: [teamId], references: [id])
-  teamId            Int?       @map("team_id")
+  teamId            String?    @map("team_id")
   responses         Response[]
 
   @@map("forms")
 }
 
 model Folder {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @unique @default(cuid())
   name        String
   permissions Json?
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
   creator     User      @relation("CreatedFolders", fields: [creatorId], references: [id])
-  creatorId   Int       @map("creator_id")
+  creatorId   String    @map("creator_id")
   forms       Form[]
   team        Team?     @relation(fields: [teamId], references: [id])
-  teamId      Int?
+  teamId      String?
 
   @@map("folders")
 }
 
 model Team {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @unique @default(cuid())
   name        String
   logoUrl     String?   @map("logo_url")
   permissions Json?
@@ -80,7 +80,7 @@ model Team {
   updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
   creator     User      @relation("CreatedTeams", fields: [creatorId], references: [id])
-  creatorId   Int       @map("creator_id")
+  creatorId   String    @map("creator_id")
   forms       Form[]
   members     User[]    @relation("TeamMembers")
   folders     Folder[]
@@ -89,13 +89,13 @@ model Team {
 }
 
 model Response {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @unique @default(cuid())
   formAnswers Json[]
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
   form        Form      @relation(fields: [formId], references: [id])
-  formId      Int       @map("form_id")
+  formId      String    @map("form_id")
 
   @@map("responses")
 }

@@ -82,7 +82,7 @@ export class UsersController {
     try {
       const { userId } = req.params;
 
-      const foundUser = await this.usersService.getUserByID(Number(userId));
+      const foundUser = await this.usersService.getUserByID(userId);
 
       if (!foundUser)
         return errorResponse(
@@ -91,7 +91,7 @@ export class UsersController {
           status.NOT_FOUND,
         );
 
-      await this.usersService.delUserByID(Number(userId));
+      await this.usersService.delUserByID(userId);
 
       return successResponse(
         res,
@@ -124,7 +124,7 @@ export class UsersController {
           status.BAD_REQUEST,
         );
 
-      await this.usersService.changePassword(Number(user.id), newPassword);
+      await this.usersService.changePassword(user.id, newPassword);
 
       return successResponse(res, {}, USER_SUCCESS_MESSAGES.CHANGE_PW_SUCCESS);
     } catch (error) {
@@ -151,7 +151,7 @@ export class UsersController {
           );
       }
 
-      await this.usersService.updateUserByID(Number(userId), {
+      await this.usersService.updateUserByID(userId, {
         username,
         email,
         avatarUrl,
