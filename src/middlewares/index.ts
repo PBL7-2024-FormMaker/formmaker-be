@@ -14,7 +14,9 @@ import {
 } from '../schemas/teams.schemas';
 import {
   ChangePasswordSchema,
+  forgotPasswordSchema,
   LoginSchema,
+  resetPasswordSchema,
   SignUpSchema,
   UpdateUserSchema,
 } from '../schemas/users.schemas';
@@ -35,6 +37,8 @@ import { validate } from './validation.middlewares';
 
 const validateSignUpInput = validate(SignUpSchema);
 const validateLoginInput = validate(LoginSchema);
+const validateForgotPasswordInput = validate(forgotPasswordSchema);
+const validateResetPasswordInput = validate(resetPasswordSchema);
 
 const validateChangePasswordInput = validate(ChangePasswordSchema);
 const validateUpdateUserInput = validate(UpdateUserSchema);
@@ -67,9 +71,11 @@ export {
   validateCreateFormSchema,
   validateCreateTeamSchema,
   validateFilterObject,
+  validateForgotPasswordInput,
   validateGetFormQueryParamsSchema,
   validateLoginInput,
   validateRemoveTeamMemberSchema,
+  validateResetPasswordInput,
   validateSignUpInput,
   validateUpdateFolderSchema,
   validateUpdateFormSchema,

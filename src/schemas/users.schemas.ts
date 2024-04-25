@@ -44,6 +44,18 @@ export const ChangePasswordSchema = z.object({
   newPassword: passwordValidation,
 });
 
+export const forgotPasswordSchema = z.object({
+  email: emailValidation,
+});
+
+export const resetPasswordSchema = z.object({
+  password: passwordValidation,
+});
+
+export const tokenSchema = z.object({
+  token: z.string(),
+});
+
 export const UpdateUserSchema = z.object({
   email: emailValidation.optional(),
   username: z
@@ -61,5 +73,9 @@ export type LoginSchemaType = z.infer<typeof LoginSchema>;
 export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 
 export type ChangePasswordSchemaType = z.infer<typeof ChangePasswordSchema>;
+
+export type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>;
+
+export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
 
 export type UpdateUserSchemaType = z.infer<typeof UpdateUserSchema>;

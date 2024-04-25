@@ -9,6 +9,8 @@ export const ROUTES = {
     PATH: '/auth',
     SIGN_UP: '/signup',
     LOGIN: '/login',
+    FORGOT_PASSWORD: '/forgot-password',
+    RESET_PASSWORD: '/reset-password',
   },
   USER: {
     PATH: '/users',

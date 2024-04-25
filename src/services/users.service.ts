@@ -63,4 +63,15 @@ export class UsersService {
         },
       })
       .favouriteForms();
+
+  public async resetPassword(userId: string, password: string) {
+    return await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: hashSync(password, SALT_ROUNDS),
+      },
+    });
+  }
 }
