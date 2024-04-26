@@ -4,7 +4,10 @@ import status from 'http-status';
 import { CustomRequest } from '@/types/customRequest.types';
 
 import { USER_ERROR_MESSAGES, USER_SUCCESS_MESSAGES } from '../constants';
-import { Mailer } from '../infracstructure/mailer/mailer';
+import {
+  getResetPasswordMailer,
+  ResetPasswordMailer,
+} from '../infracstructure/mailer/resetPasswordMailer';
 import {
   ForgotPasswordType,
   LoginSchemaType,
@@ -135,14 +138,9 @@ export class AuthController {
       const resetoken = createJWT(payload);
       //3. Send to token back to the user email
       const resetUrl = `${process.env.CALLBACK_URL}?token=${resetoken}`;
-      const message = `Click this link to reset your password ${resetUrl}`;
       try {
-        const mailer = new Mailer();
-        await mailer.sendPasswordResetEmail({
-          email: user.email,
-          subject: 'Reset password',
-          message,
-        });
+        const mailer: ResetPasswordMailer = getResetPasswordMailer();
+        mailer.sendPasswordResetEmail(user.email, resetUrl);
         return successResponse(
           res,
           { resetoken },
