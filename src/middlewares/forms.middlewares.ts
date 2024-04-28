@@ -291,7 +291,14 @@ export const checkFormExistence = async (
 ) => {
   try {
     const { formId } = req.params;
-    const existingForm = await findFormById(formId, res);
+    const existingForm = await findFormById(formId);
+    if (!existingForm) {
+      return errorResponse(
+        res,
+        FORM_ERROR_MESSAGES.FORM_NOT_FOUND,
+        status.BAD_REQUEST,
+      );
+    }
     req.body.form = existingForm;
     next();
   } catch (error) {

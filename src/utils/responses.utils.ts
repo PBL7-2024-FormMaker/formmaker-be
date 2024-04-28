@@ -1,11 +1,8 @@
 import { Prisma } from '@prisma/client';
 import { JsonValue } from '@prisma/client/runtime/library';
-import { Response } from 'express';
-import status from 'http-status';
 import isUndefined from 'lodash.isundefined';
 import toString from 'lodash.tostring';
 
-import { RESPONSES_ERROR_MESSAGES } from '../constants';
 import { ElementResponseSchema } from '../schemas/createResponse.schemas';
 import { ElementSchema } from '../schemas/forms.schemas';
 import {
@@ -13,22 +10,12 @@ import {
   ResponsesService,
 } from '../services/responses.service';
 
-import { errorResponse } from './messages.utils';
 import { isKeyOfObject } from './object.utils';
 
 const responsesService: ResponsesService = getResponsesService();
 
-export const findResponseById = async (responseId: string, res: Response) => {
-  const existingResponse = await responsesService.getResponseById(responseId);
-  if (!existingResponse) {
-    return errorResponse(
-      res,
-      RESPONSES_ERROR_MESSAGES.RESPONSE_NOT_FOUND,
-      status.NOT_FOUND,
-    );
-  }
-  return existingResponse;
-};
+export const findResponseById = async (responseId: string) =>
+  await responsesService.getResponseById(responseId);
 
 export const convertRawResponseToExtraInfoResponse = (
   elementListByIdObject: Record<string, Prisma.JsonValue>,
