@@ -563,7 +563,7 @@ paths:
           in: path
           required: true
           schema:
-            type: number
+            type: string
             example: 1
       responses:
         '200':
@@ -723,7 +723,7 @@ paths:
           in: path
           required: true
           schema:
-            type: number
+            type: string
             example: 1
       responses:
         '200':
@@ -863,7 +863,7 @@ paths:
           in: path
           required: true
           schema:
-            type: number
+            type: string
             example: 1
       responses:
         '200':
@@ -1013,7 +1013,7 @@ paths:
           in: path
           required: true
           schema:
-            type: number
+            type: string
             example: 1
       requestBody:
         content:
@@ -1072,7 +1072,7 @@ paths:
           in: path
           required: true
           schema:
-            type: number
+            type: string
             example: 1
       requestBody:
         content:
@@ -1118,14 +1118,546 @@ paths:
                   message:
                     type: string
                     example: Internal server error
-
+  /folders:
+    get:
+      tags:
+        - Folders
+      summary: Get all my folders
+      operationId: getIndependentFolders
+      security:
+        - bearerAuth:
+            - write:folders
+            - read:folders
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Folder'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    post:
+      tags:
+        - Folders
+      summary: Create a Folder
+      operationId: createFolder
+      security:
+        - bearerAuth:
+            - write:folders
+            - read:folders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Test
+        required: true
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 201
+                  message:
+                    type: string
+                    example: Folder created successfully
+                  data:
+                    $ref: '#/components/schemas/Folder'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /folders/team/{id}:
+    post:
+      tags:
+        - Folders
+      summary: Create a Folder in team
+      operationId: createFolderInTeam
+      security:
+        - bearerAuth:
+            - write:folders
+            - read:folders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvm3f0be0000w6dcwrgy01tz
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - team
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Test
+                teamId:
+                  type: string
+                  example: clvm3f0be0000w6dcwrgy01tz
+        required: true
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 201
+                  message:
+                    type: string
+                    example: Folder in team created successfully
+                  data:
+                    $ref: '#/components/schemas/Folder'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /folders/{id}:
+    get:
+      tags:
+        - Folders
+      summary: Get a folder by ID
+      operationId: getFolderById
+      security:
+        - bearerAuth:
+            - write:folders
+            - read:folders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvm1lri80000tpbsvlh1xvmq
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/Folder'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    patch:
+      tags:
+        - Folders
+      summary: Update a folder
+      operationId: updateFolder
+      security:
+        - bearerAuth:
+            - write:folders
+            - read:folders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvm1lri80000tpbsvlh1xvmq
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Test
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    $ref: '#/components/schemas/Folder'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    delete:
+      tags:
+        - Folders
+      summary: Delete a folder
+      operationId: deleteFolder
+      security:
+        - bearerAuth:
+            - write:folders
+            - read:folders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvm1lri80000tpbsvlh1xvmq
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: object
+                    example: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /responses/{id}:
+    get:
+      tags:
+        - Responses
+      summary: Get all my responses
+      operationId: getResponsesByFormId
+      security:
+        - bearerAuth:
+            - write:responses
+            - read:responses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvm1lri80000tpbsvlh1xvmq
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    post:
+      tags:
+        - Responses
+      summary: Create a Response
+      operationId: createResponse
+      security:
+        - bearerAuth:
+            - write:responses
+            - read:responses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvm3f0be0000w6dcwrgy01tz
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - formId
+                - formAnswers
+              type: object
+              properties:
+                formId:
+                  type: string
+                  example: clvm3f0be0000w6dcwrgy01tz
+                formAnswers:
+                  type: array
+                  example:
+                    [
+                      {
+                        'elementId': '02190b89-e764-418b-8573-269dd2761a8c',
+                        'answers':
+                          [
+                            {
+                              'fieldId': 'e28bf8fc-f524-43fc-a200-e825e0264ab4',
+                              'text': 'example1@example.com',
+                            },
+                          ],
+                      },
+                    ]
+        required: true
+      responses:
+        '201':
+          description: Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 201
+                  message:
+                    type: string
+                    example: Response created successfully
+                  data:
+                    $ref: '#/components/schemas/Response'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+    delete:
+      tags:
+        - Responses
+      summary: Delete many responses
+      operationId: deleteMultipleResponses
+      security:
+        - bearerAuth:
+            - write:responses
+            - read:responses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvnf3hnu0003ndg2bfb33szk
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - responsesIds
+              type: object
+              properties:
+                responsesIds:
+                  type: array
+                  example:
+                    ['clvnhp2h70002106bxfga7r9n', 'clvnjd3xg0002a9uw8pcvv2gn']
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: object
+                    example: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /responses/{formId}/{responseId}:
+    delete:
+      tags:
+        - Responses
+      summary: Delete response
+      operationId: deleteResponse
+      security:
+        - bearerAuth:
+            - write:responses
+            - read:responses
+      parameters:
+        - name: formId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvnf3hnu0003ndg2bfb33szk
+        - name: responseId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: clvnjda2t0005a9uw9ajpdmsl
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Success
+                  data:
+                    type: object
+                    example: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
 components:
   schemas:
     User:
       type: object
       properties:
         id:
-          type: number
+          type: string
           example: 1
         username:
           type: string
@@ -1155,7 +1687,7 @@ components:
       type: object
       properties:
         id:
-          type: number
+          type: string
           example: 1
         title:
           type: string
@@ -1265,7 +1797,7 @@ components:
       type: object
       properties:
         id:
-          type: number
+          type: string
           example: 1
         name:
           type: string
@@ -1286,7 +1818,7 @@ components:
           type: string
           example: 2024-02-26T03:53:41.438Z
         creatorId:
-          type: number
+          type: string
           example: 2
         members:
           type: array
@@ -1294,7 +1826,7 @@ components:
             type: object
             properties:
               id:
-                type: number
+                type: string
                 example: 2
               email:
                 type: string
@@ -1308,11 +1840,56 @@ components:
             type: object
             properties:
               id:
-                type: number
+                type: string
                 example: 2
               name:
                 type: string
                 example: Folder A
+    Folder:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        name:
+          type: string
+          example: ABC
+        permissions:
+          type: object
+          example: { '1': ['view', 'edit', 'delete'] }
+        createdAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        updatedAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        deletedAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        creatorId:
+          type: string
+          example: 2
+    Response:
+      type: object
+      properties:
+        id:
+          type: string
+          example: clvndrov90000patr2pihidnp
+        formAnswers:
+          type: array
+          example: []
+        createdAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        updatedAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        deletedAt:
+          type: string
+          example: 2024-02-26T03:53:41.438Z
+        formId:
+          type: string
+          example: clvndrov90000patr2pihidnp
   securitySchemes:
     bearerAuth:
       in: header
