@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { CustomRequest } from '@/types/customRequest.types';
-
 import { ERROR_MESSAGES, FORM_ERROR_MESSAGES } from '../constants';
 import {
   addressConfigSchema,
@@ -31,6 +29,7 @@ import {
   timeConfigSchema,
 } from '../schemas/forms.schemas';
 import { ElementsSchema } from '../schemas/forms.schemas';
+import { CustomRequest } from '../types/customRequest.types';
 import { ELEMENT_TYPE } from '../types/forms.types';
 import { errorResponse, findFormById, validateData } from '../utils';
 

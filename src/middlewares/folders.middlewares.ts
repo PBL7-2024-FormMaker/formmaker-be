@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { FOLDER_ERROR_MESSAGES } from '@/constants';
-
+import { FOLDER_ERROR_MESSAGES } from '../constants';
 import { errorResponse, findFolderById } from '../utils';
 
 export const checkFolderExistence = async (

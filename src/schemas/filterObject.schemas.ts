@@ -7,8 +7,8 @@ import {
   DEFAULT_SORT_FIELD,
   RESPONSES_ERROR_MESSAGES,
   SORT_DIRECTIONS,
-} from '@/constants';
-import { isSortDirection } from '@/utils';
+} from '../constants';
+import { isSortDirection } from '../utils';
 
 export const filterObjectSchema = z.object({
   page: z.string().optional().default(DEFAULT_PAGE.toString()),

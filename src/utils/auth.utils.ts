@@ -1,4 +1,4 @@
-import { compareSync } from 'bcrypt';
+import { compareSync } from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 
 import { JWT_SECRET, JWT_TOKEN_DURATION } from '../configs/secrets';

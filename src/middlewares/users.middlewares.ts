@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { USER_ERROR_MESSAGES } from '@/constants';
-
+import { USER_ERROR_MESSAGES } from '../constants';
 import { errorResponse, findUserById } from '../utils';
 
 export const checkUserExistence = async (

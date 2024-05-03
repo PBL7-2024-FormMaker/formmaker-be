@@ -1,6 +1,5 @@
-import { createdResponseValidation } from '@/schemas/createResponse.schemas';
-import { filterObjectSchema } from '@/schemas/filterObject.schemas';
-
+import { createdResponseValidation } from '../schemas/createResponse.schemas';
+import { filterObjectSchema } from '../schemas/filterObject.schemas';
 import {
   CreateFolderSchema,
   UpdateFolderSchema,

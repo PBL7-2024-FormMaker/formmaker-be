@@ -1,4 +1,4 @@
-import { hashSync } from 'bcrypt';
+import { hashSync } from 'bcryptjs';
 
 import prisma from '../configs/db.config';
 import { SALT_ROUNDS } from '../configs/secrets';

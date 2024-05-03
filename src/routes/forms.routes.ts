@@ -1,7 +1,5 @@
 import { Router } from 'express';
 
-import { checkFolderExistence } from '@/middlewares/folders.middlewares';
-
 import { ROUTES } from '../constants';
 import {
   FormsController,
@@ -17,6 +15,7 @@ import {
   validateUpdateFormSchema,
   verifyToken,
 } from '../middlewares';
+import { checkFolderExistence } from '../middlewares/folders.middlewares';
 import { checkFormExistence } from '../middlewares/forms.middlewares';
 
 const formsRoute = Router();

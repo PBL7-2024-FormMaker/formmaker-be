@@ -2,7 +2,7 @@ import {
   DATE_ACTIONS,
   OTHER_FIELDS_ACTIONS,
   SORT_DIRECTIONS,
-} from '@/constants';
+} from '../constants';
 
 export const isSortDirection = (str: string) =>
   Object.values(SORT_DIRECTIONS).includes(str as SORT_DIRECTIONS);

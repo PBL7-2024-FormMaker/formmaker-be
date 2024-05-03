@@ -2,10 +2,9 @@ import { Team } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 import status from 'http-status';
 
-import { CustomRequest } from '@/types/customRequest.types';
-
 import { TEAM_ERROR_MESSAGES } from '../constants';
 import { getTeamsService, TeamsService } from '../services/teams.service';
+import { CustomRequest } from '../types/customRequest.types';
 import { errorResponse, findTeamById } from '../utils';
 
 const teamsService: TeamsService = getTeamsService();

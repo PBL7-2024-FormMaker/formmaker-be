@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
-import { ROUTES } from '@/constants';
+import { ROUTES } from '../constants';
 import {
   getResponsesController,
   ResponsesController,
-} from '@/controllers/responses.controller';
+} from '../controllers/responses.controller';
 import {
   checkFormExistence,
   checkResponseExistence,
@@ -12,7 +12,7 @@ import {
   validateCreatedResponse,
   validateFilterObject,
   verifyToken,
-} from '@/middlewares';
+} from '../middlewares';
 
 const responseRoute = Router();
 

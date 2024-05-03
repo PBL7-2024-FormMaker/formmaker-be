@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { INTERNAL_SERVER_ERROR, OK } from 'http-status';
 
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/constants';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../constants';
 
 export const successResponse = <T>(
   res: Response,

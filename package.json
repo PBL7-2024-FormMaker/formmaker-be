@@ -11,7 +11,9 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start:lambda": "netlify-lambda serve functions",
+    "build:lambda": "netlify-lambda build functions"
   },
   "lint-staged": {
     "*.ts": [
@@ -32,7 +34,8 @@
   },
   "homepage": "https://github.com/PBL7-2024-FormMaker/formmaker-be#readme",
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
+    "@babel/preset-typescript": "^7.24.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/email-templates": "^10.0.4",
     "@types/express": "^4.17.21",
@@ -63,7 +66,7 @@
     "@types/cors": "^2.8.17",
     "@types/lodash.isundefined": "^3.0.9",
     "@types/lodash.tostring": "^4.1.9",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "cloudinary": "^2.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
@@ -78,11 +81,13 @@
     "lodash.omit": "^4.5.0",
     "lodash.tostring": "^4.1.4",
     "multer": "^1.4.5-lts.1",
+    "netlify-lambda": "^2.0.16",
     "nodemailer": "^6.9.13",
     "nodemailer-express-handlebars": "^6.1.2",
     "nodemon": "^3.1.0",
     "path": "^0.12.7",
     "prisma": "^5.8.1",
+    "serverless-http": "^3.2.0",
     "tsconfig-paths": "^4.2.0",
     "yaml": "^2.3.4",
     "zod": "^3.22.4"
