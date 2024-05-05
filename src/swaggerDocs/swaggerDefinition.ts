@@ -31,5 +31,13 @@ export const swaggerDefinition = {
       name: 'Teams',
       description: 'APIs about Teams',
     },
+    {
+      name: 'Folders',
+      description: 'APIs about Folders',
+    },
+    {
+      name: 'Responses',
+      description: 'APIs about Responses',
+    },
   ],
 };
