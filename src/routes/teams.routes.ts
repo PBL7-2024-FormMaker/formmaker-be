@@ -55,6 +55,15 @@ teamsRoute.patch(
   validateAddTeamMemberSchema,
   teamsController.addTeamMember,
 );
+
+teamsRoute.post(
+  ROUTES.TEAM.INVITE_MEMBER,
+  verifyToken,
+  checkUserExistence,
+  checkTeamExistence,
+  validateAddTeamMemberSchema,
+  teamsController.inviteTeamMember,
+);
 teamsRoute.patch(
   ROUTES.TEAM.REMOVE_MEMBER,
   verifyToken,

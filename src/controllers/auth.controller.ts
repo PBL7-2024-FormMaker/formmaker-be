@@ -1,13 +1,10 @@
 import { Response } from 'express';
 import status from 'http-status';
 
+import { getMailService, Mailer } from '@/infracstructure/mailer/mailer';
 import { CustomRequest } from '@/types/customRequest.types';
 
 import { USER_ERROR_MESSAGES, USER_SUCCESS_MESSAGES } from '../constants';
-import {
-  getResetPasswordMailer,
-  ResetPasswordMailer,
-} from '../infracstructure/mailer/resetPasswordMailer';
 import {
   ForgotPasswordType,
   LoginSchemaType,
@@ -139,7 +136,7 @@ export class AuthController {
       //3. Send to token back to the user email
       const resetUrl = `${process.env.CALLBACK_URL}?token=${resetoken}`;
       try {
-        const mailer: ResetPasswordMailer = getResetPasswordMailer();
+        const mailer: Mailer = getMailService();
         mailer.sendPasswordResetEmail(user.email, resetUrl);
         return successResponse(
           res,

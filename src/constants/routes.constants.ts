@@ -52,6 +52,7 @@ export const ROUTES = {
     UPDATE_TEAM: '/:teamId',
     DELETE_TEAM: '/:teamId',
     ADD_MEMBER: '/:teamId/add-member',
+    INVITE_MEMBER: '/:teamId/invite-member',
     REMOVE_MEMBER: '/:teamId/remove-member',
   },
   RESPONSE: {
