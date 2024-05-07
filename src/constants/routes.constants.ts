@@ -31,6 +31,8 @@ export const ROUTES = {
     UPDATE_FORM: '/:formId',
     DELETE_FORM: '/:formId',
     UPDATE_DISABLED_STATUS: '/:formId/disabled/:disabled',
+    UPDATE_DISABLED_NOTIFICATION_STATUS:
+      '/:formId/disabled-notification/:disabledNotification',
     RESTORE_FORM: '/:formId/restore',
     FAVOURITES: '/:formId/favourites',
     CREATE_FORM_IN_TEAM: '/team/:teamId',

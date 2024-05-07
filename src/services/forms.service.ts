@@ -407,6 +407,19 @@ export class FormsService {
       },
     });
 
+  public updateDisabledNotificationStatus = (
+    formId: string,
+    disabledNotification: boolean,
+  ) =>
+    prisma.form.update({
+      where: {
+        id: formId,
+      },
+      data: {
+        disabledNotification: disabledNotification,
+      },
+    });
+
   public softDeleteForm = (formId: string) =>
     prisma.form.update({
       where: {

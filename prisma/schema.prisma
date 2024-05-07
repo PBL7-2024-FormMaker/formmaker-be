@@ -32,25 +32,26 @@ model User {
 }
 
 model Form {
-  id                String     @id @unique @default(cuid())
-  title             String
-  logoUrl           String?    @map("logo_url")
-  settings          Json
-  disabled          Boolean    @default(false)
-  totalSubmissions  Int        @default(0) @map("total_submissions")
-  elements          Json[]
-  permissions       Json?
-  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime?  @updatedAt @map("updated_at") @db.Timestamptz(3)
-  deletedAt         DateTime?  @map("deleted_at") @db.Timestamptz(3)
-  creator           User       @relation("CreatedForms", fields: [creatorId], references: [id])
-  creatorId         String     @map("creator_id")
-  favouritedByUsers User[]     @relation("FavouriteForms")
-  folder            Folder?    @relation(fields: [folderId], references: [id])
-  folderId          String?    @map("folder_id")
-  team              Team?      @relation(fields: [teamId], references: [id])
-  teamId            String?    @map("team_id")
-  responses         Response[]
+  id                   String     @id @unique @default(cuid())
+  title                String
+  logoUrl              String?    @map("logo_url")
+  settings             Json
+  disabled             Boolean    @default(false)
+  disabledNotification Boolean    @default(true)
+  totalSubmissions     Int        @default(0) @map("total_submissions")
+  elements             Json[]
+  permissions          Json?
+  createdAt            DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime?  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt            DateTime?  @map("deleted_at") @db.Timestamptz(3)
+  creator              User       @relation("CreatedForms", fields: [creatorId], references: [id])
+  creatorId            String     @map("creator_id")
+  favouritedByUsers    User[]     @relation("FavouriteForms")
+  folder               Folder?    @relation(fields: [folderId], references: [id])
+  folderId             String?    @map("folder_id")
+  team                 Team?      @relation(fields: [teamId], references: [id])
+  teamId               String?    @map("team_id")
+  responses            Response[]
 
   @@map("forms")
 }
