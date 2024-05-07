@@ -1,7 +1,8 @@
-import { Prisma, Team } from '@prisma/client';
+import { Prisma, Team, User } from '@prisma/client';
 import { Request, Response } from 'express';
 import status from 'http-status';
 
+import { getMailService, Mailer } from '@/infracstructure/mailer/mailer';
 import { CustomRequest } from '@/types/customRequest.types';
 
 import {
@@ -9,6 +10,7 @@ import {
   TEAM_ERROR_MESSAGES,
   TEAM_SUCCESS_MESSAGES,
   USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
 } from '../constants';
 import {
   AddTeamMemberSchemaType,
@@ -19,7 +21,7 @@ import {
 import { AuthService, getAuthService } from '../services/auth.service';
 import { getTeamsService, TeamsService } from '../services/teams.service';
 import { getUsersService, UsersService } from '../services/users.service';
-import { canEdit, canView, errorResponse, successResponse } from '../utils';
+import { canEdit, createJWT, errorResponse, successResponse } from '../utils';
 
 let instance: TeamsController | null = null;
 
@@ -58,17 +60,7 @@ export class TeamsController {
     res: Response,
   ) => {
     try {
-      const { userId } = req.session;
-
       const { team } = req.body;
-
-      if (!canView(userId, team.permissions as Prisma.JsonObject)) {
-        return errorResponse(
-          res,
-          ERROR_MESSAGES.ACCESS_DENIED,
-          status.FORBIDDEN,
-        );
-      }
 
       return successResponse(res, team);
     } catch (error) {
@@ -163,17 +155,7 @@ export class TeamsController {
     res: Response,
   ) => {
     try {
-      const { userId } = req.session;
-
       const { email, team } = req.body;
-
-      if (!canEdit(userId, team.permissions as Prisma.JsonObject)) {
-        return errorResponse(
-          res,
-          ERROR_MESSAGES.ACCESS_DENIED,
-          status.FORBIDDEN,
-        );
-      }
 
       const foundUser = await this.authService.getUserByEmail(email);
       if (!foundUser) {
@@ -202,6 +184,54 @@ export class TeamsController {
         {},
         TEAM_SUCCESS_MESSAGES.ADD_TEAM_MEMBER_SUCCESS,
       );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public inviteTeamMember = async (
+    req: CustomRequest<
+      AddTeamMemberSchemaType & { team: Team } & { user: User }
+    >,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+
+      const { user, email, team } = req.body;
+
+      if (!canEdit(userId, team.permissions as Prisma.JsonObject)) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      const payload = {
+        userId: userId,
+        email: email,
+        team: team,
+        senderName: user.username,
+      };
+      const acceptedToken = createJWT(payload);
+      const invitedUrl = `${process.env.FRONT_END_URL}/teams/${team.id}?view-invitation=true&token=${acceptedToken}`;
+      try {
+        const mailer: Mailer = getMailService();
+        mailer.sendInviteToTeamEmail(
+          email,
+          user.username,
+          team.name,
+          invitedUrl,
+        );
+        return successResponse(
+          res,
+          invitedUrl,
+          USER_SUCCESS_MESSAGES.SENT_EMAIL_SUCCESS,
+        );
+      } catch (error) {
+        return errorResponse(res, USER_ERROR_MESSAGES.ERROR_SEND_EMAIL, 500);
+      }
     } catch (error) {
       return errorResponse(res);
     }

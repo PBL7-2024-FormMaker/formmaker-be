@@ -58,4 +58,32 @@ export class Mailer {
     const html = await this.template.render(template, vars);
     await this.transporter.sendMail({ ...options, html });
   };
+
+  public sendPasswordResetEmail(email: string, resetUrl: string) {
+    const to = email;
+    const from = '"Formmaker" <formmakersp2024@gmail.com>';
+    const subject = 'Reset password';
+    const message = {
+      resetUrl: resetUrl,
+    };
+    this.send({ to, from, subject }, 'password-reset', { message });
+  }
+
+  public sendInviteToTeamEmail(
+    email: string,
+    senderName: string,
+    team: string,
+    invitedUrl: string,
+  ) {
+    const to = email;
+    const from = '"Formmaker" <formmakersp2024@gmail.com>';
+    const subject = `${senderName} invited you to join ${team}`;
+    const message = {
+      invitedUrl: invitedUrl,
+      email: email,
+      team: team,
+      senderName: senderName,
+    };
+    this.send({ to, from, subject }, 'invite-to-team', { message });
+  }
 }

@@ -3,12 +3,12 @@
 
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <title>Reset Password Email Template</title>
-    <meta name="description" content="Reset Password Email Template.">
+    <title>Invite To Team Email Template</title>
+    <meta name="description" content="Invite To Team Email Template.">
     <style type="text/css">
         a:hover {text-decoration: underline !important;}
         .button:hover {
-             background: #20446e !important;
+            background: #20446e !important;
         }
     </style>
 </head>
@@ -37,15 +37,17 @@
                                 <tr>
                                     <td style="padding:0 35px;">
                                         <h1 style="color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;">You have
-                                            requested to reset your password</h1>
+                                            been invited to {{message.senderName}}'s team: {{message.team}}</h1>
+                                        <br/>
                                         <p style="color:#455056; font-size:15px;line-height:24px; margin:0;">
-                                            We cannot simply send you your old password. A unique link to reset your
-                                            password has been generated for you. To reset your password, click the
-                                            following link and follow the instructions.
+                                            You can accept or ignore this invitation.
                                         </p>
-                                        <a href="{{message.resetUrl}}" class="button"
-                                            style="background:#3F72AF;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;">Reset
-                                            Password</a>
+                                        <br/>
+                                        <p style="color:#455056; font-size:15px;line-height:24px; margin:0;">
+                                            <span style="font-weight:bold">Note: </span> This invitation was intended for {{message.email}}. If you were not expecting this invitation, you can ignore this email.
+                                        </p>
+                                        <a href="{{message.invitedUrl}}" class="button"
+                                            style="background:#3F72AF;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;">View invitation</a>
                                     </td>
                                 </tr>
                                 <tr>
