@@ -4,6 +4,7 @@ export interface GetFormsArgs {
   searchText: string;
   isDeleted: boolean;
   isFavourite: boolean;
+  isSharedForms: boolean;
   sortField: string;
   sortDirection: string;
   folderId?: string;

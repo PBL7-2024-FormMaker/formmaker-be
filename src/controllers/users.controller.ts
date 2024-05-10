@@ -63,6 +63,7 @@ export class UsersController {
       const { user } = req.body;
 
       const returnUser = {
+        id: user.id,
         username: user.username,
         email: user.email,
         avatarUrl: user.avatarUrl,

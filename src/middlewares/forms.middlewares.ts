@@ -320,6 +320,7 @@ export const validateGetFormQueryParamsSchema = async (
       pageSize: pageSizeParam,
       isDeleted: isDeletedParam,
       isFavourite: isFavouriteParam,
+      isSharedForms: isSharedFormsParam,
       folderId: folderIdParam,
       teamId: teamIdParam,
     } = req.query;
@@ -332,6 +333,9 @@ export const validateGetFormQueryParamsSchema = async (
       pageSize: pageSizeParam ? Number(pageSizeParam) : undefined,
       isDeleted: isDeletedParam ? Number(isDeletedParam) : undefined,
       isFavourite: isFavouriteParam ? Number(isFavouriteParam) : undefined,
+      isSharedForms: isSharedFormsParam
+        ? Number(isSharedFormsParam)
+        : undefined,
       folderId: folderIdParam ? folderIdParam : undefined,
       teamId: teamIdParam ? teamIdParam : undefined,
     };

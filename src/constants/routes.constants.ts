@@ -25,6 +25,9 @@ export const ROUTES = {
   FORM: {
     PATH: '/forms',
     GET_FORM_DETAILS: '/:formId',
+    GET_USERS_IN_FORM: '/:formId/members',
+    INVITE_MEMBER: '/:formId/invite-member',
+    REMOVE_MEMBER: '/:formId/remove-member',
     UPDATE_FORM: '/:formId',
     DELETE_FORM: '/:formId',
     UPDATE_DISABLED_STATUS: '/:formId/disabled/:disabled',

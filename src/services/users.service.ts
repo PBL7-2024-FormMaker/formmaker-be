@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { hashSync } from 'bcrypt';
 
 import prisma from '../configs/db.config';
@@ -22,6 +23,24 @@ export class UsersService {
         id,
       },
     });
+
+  public getUsersByFormId = async (permissions: string[]) => {
+    const users: User[] = [];
+    const userIds = Object.keys(permissions);
+
+    for (const userId of userIds) {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+      if (user) {
+        users.push(user);
+      }
+    }
+
+    return users;
+  };
 
   public delUserByID = (id: string) =>
     prisma.user.delete({

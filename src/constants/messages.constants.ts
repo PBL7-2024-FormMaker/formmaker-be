@@ -73,6 +73,8 @@ export const FORM_SUCCESS_MESSAGES = {
   MOVE_TO_TEAM_SUCCESS: 'This form has been moved to team successfully',
   REMOVE_FROM_TEAM_SUCCESS:
     'This form has been moved back to your forms successfully',
+  ADD_FORM_MEMBER_SUCCESS: 'Add new form member successfully',
+  REMOVE_FORM_MEMBER_SUCCESS: 'Remove form member successfully',
 };
 
 export const FORM_ERROR_MESSAGES = {
@@ -123,6 +125,11 @@ export const FORM_ERROR_MESSAGES = {
     "This field is required in property 'config' of the divider element",
   REQUIRED_FIELD_IN_PAGE_BREAK_CONFIG:
     "This field is required in property 'config' of the page break element",
+  USER_EXISTS_IN_FORM: 'This user already exists in the form',
+  USER_NOT_IN_FORM: 'This user does not exist in the form',
+  NO_MEMBERS_IN_FORM: 'There are no members in the form',
+  CAN_NOT_REMOVE_FORM_OWNER: 'FORM owner can not be removed from the form',
+  CAN_NOT_INVITE_USER: 'Error when invite user',
 };
 
 export const IMAGE_ERROR_MESSAGES = {
