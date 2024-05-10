@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body marginheight="0" topmargin="0" marginwidth="0" style="margin: 0px; background-color: #f2f3f8;" leftmargin="0">
+    <table cellspacing="0" border="0" cellpadding="0" width="100%" bgcolor="#f2f3f8"
+        style="font-family: 'Open Sans', sans-serif;">
+        <tr>
+            <td>
+                <tr>
+                    <td style="padding:0 35px;">
+                        <p>Your {{message.formTitle}} currently receives a new response</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:0 35px;">
+                        <p>You can see all responses at <a href={{message.responsePath}}>here</a></p>
+                    </td>
+                </tr>
+            </td>
+        </tr>
+    </table>
+    <div id="formAnswersContainer"></div>
+    <script>
+        var formAnswers = message.formAnswers
+        console.log('formAnswers', formAnswers)
+        formAnswers.forEach(function(formAnswer) {
+      var elementNameDiv = document.createElement('div');
+      elementNameDiv.textContent = formAnswer.elementName;
+      formAnswersContainer.appendChild(elementNameDiv);
+
+      var answersDiv = document.createElement('div');
+      var answersText = formAnswer.answers.map(function(fieldAnswer) {
+        return fieldAnswer.text;
+      }).join(' ');
+      answersDiv.textContent = answersText;
+      formAnswersContainer.appendChild(answersDiv);
+    });
+    </script>
+</body>
+</html>

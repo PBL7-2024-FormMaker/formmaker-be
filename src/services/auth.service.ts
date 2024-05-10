@@ -20,6 +20,13 @@ export class AuthService {
       },
     });
   }
+  public async getUserById(id: string) {
+    return await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+  }
 
   public async checkExist(email: string) {
     const existingUser = await this.getUserByEmail(email);

@@ -1,5 +1,6 @@
 import * as path from 'path';
 
+import { Prisma } from '@prisma/client';
 import Email from 'email-templates';
 import { createTransport } from 'nodemailer';
 
@@ -85,6 +86,28 @@ export class Mailer {
       senderName: senderName,
     };
     this.send({ to, from, subject }, 'invite-to-team', { message });
+  }
+  public sendNotificationResponse(
+    email: string,
+    formTitle: string,
+    responsePath: string,
+    formAnswers: Prisma.JsonValue[],
+    elementIdAndNameList: {
+      elementId: string;
+      elementName: string;
+    }[],
+  ) {
+    const to = email;
+    const from = '"Formmaker" <formmakersp2024@gmail.com>';
+    const subject = `You have a response for ${formTitle}`;
+    const message = {
+      formTitle: formTitle,
+      responsePath: responsePath,
+      formAnswers: formAnswers,
+      elementIdAndNameList: elementIdAndNameList,
+    };
+
+    this.send({ to, from, subject }, 'send-notification', { message });
   }
 
   public sendInviteToFormEmail(

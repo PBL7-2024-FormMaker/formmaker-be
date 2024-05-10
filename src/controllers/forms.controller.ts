@@ -511,6 +511,36 @@ export class FormsController {
       return errorResponse(res);
     }
   };
+  public updateDisabledNotificationStatus = async (
+    req: CustomRequest<{ form: Form; user: User }>,
+    res: Response,
+  ) => {
+    try {
+      const { form, user } = req.body;
+
+      if (form.creatorId !== user.id)
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+
+      const { disabledNotification } = req.params;
+      console.log(disabledNotification);
+      const updatedForm =
+        await this.formsService.updateDisabledNotificationStatus(
+          form.id,
+          disabledNotification.toLowerCase() === 'true',
+        );
+      return successResponse(
+        res,
+        updatedForm,
+        FORM_SUCCESS_MESSAGES.UPDATE_FORM_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
 
   public deleteForm = async (
     req: CustomRequest<{ form: Form }>,

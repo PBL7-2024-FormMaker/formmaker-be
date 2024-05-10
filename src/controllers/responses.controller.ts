@@ -7,9 +7,13 @@ import {
   RESPONSES_ERROR_MESSAGES,
   RESPONSES_SUCCESS_MESSAGES,
   SORT_DIRECTIONS,
+  USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
 } from '@/constants';
+import { getMailService, Mailer } from '@/infracstructure/mailer/mailer';
 import { CreatedResponseSchema } from '@/schemas/createResponse.schemas';
 import { filterObjectSchema } from '@/schemas/filterObject.schemas';
+import { AuthService, getAuthService } from '@/services/auth.service';
 import {
   getResponsesService,
   ResponsesService,
@@ -36,8 +40,10 @@ export const getResponsesController = () => {
 
 export class ResponsesController {
   private responsesService: ResponsesService;
+  private authService: AuthService;
   public constructor() {
     this.responsesService = getResponsesService();
+    this.authService = getAuthService();
   }
 
   public convertFilterObject(
@@ -159,6 +165,40 @@ export class ResponsesController {
         form.id,
         { formAnswers },
       );
+
+      if (!form.disabledNotification) {
+        try {
+          const creatorId = form.creatorId;
+          const user = await this.authService.getUserById(creatorId);
+          if (!user)
+            return errorResponse(
+              res,
+              USER_ERROR_MESSAGES.USER_NOT_FOUND,
+              status.NOT_FOUND,
+            );
+          const elementIdAndNameList = getHasFieldLabelElementIdAndName(
+            form.elements,
+          );
+          const email = user.email;
+          const mailer: Mailer = getMailService();
+          const responsePath = `${process.env.FRONT_END_URL}/responses/${form.id}`;
+          mailer.sendNotificationResponse(
+            email,
+            form.title,
+            responsePath,
+            createdResponse.formAnswers,
+            elementIdAndNameList,
+          );
+          return successResponse(
+            res,
+            createdResponse,
+            USER_SUCCESS_MESSAGES.SENT_EMAIL_SUCCESS,
+            status.CREATED,
+          );
+        } catch (error) {
+          return errorResponse(res, USER_ERROR_MESSAGES.ERROR_SEND_EMAIL, 500);
+        }
+      }
       return successResponse(
         res,
         createdResponse,
