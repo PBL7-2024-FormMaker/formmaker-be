@@ -86,4 +86,22 @@ export class Mailer {
     };
     this.send({ to, from, subject }, 'invite-to-team', { message });
   }
+
+  public sendInviteToFormEmail(
+    email: string,
+    senderName: string,
+    form: string,
+    invitedUrl: string,
+  ) {
+    const to = email;
+    const from = '"Formmaker" <formmakersp2024@gmail.com>';
+    const subject = `${senderName} invited you to ${form} for collaboration`;
+    const message = {
+      invitedUrl: invitedUrl,
+      email: email,
+      form: form,
+      senderName: senderName,
+    };
+    this.send({ to, from, subject }, 'invite-to-form', { message });
+  }
 }

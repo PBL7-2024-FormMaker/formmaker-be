@@ -242,22 +242,107 @@ export class FormsService {
       },
     });
 
+  public getSharedFormsOfUser = async (
+    userId: string,
+    args: Omit<
+      GetFormsArgs,
+      'isDeleted' | 'isFavourite' | 'isSharedForms' | 'folderId' | 'teamId'
+    >,
+  ) =>
+    prisma.form.findMany({
+      skip: args.offset,
+      take: +args.limit,
+      where: {
+        permissions: {
+          path: [userId.toString()],
+          array_contains: [PERMISSIONS.VIEW, PERMISSIONS.EDIT],
+        },
+        OR: [
+          {
+            title: {
+              contains: args.searchText,
+            },
+          },
+          {
+            title: {
+              contains:
+                args.searchText.charAt(0).toUpperCase() +
+                args.searchText.slice(1).toLowerCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toUpperCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toLowerCase(),
+            },
+          },
+        ],
+      },
+      orderBy: {
+        [args.sortField]: args.sortDirection,
+      },
+    });
+
+  public getTotalSharedFormsByUserId = (
+    userId: string,
+    args: Pick<GetFormsArgs, 'searchText'>,
+  ) =>
+    prisma.form.count({
+      where: {
+        permissions: {
+          path: [userId.toString()],
+          array_contains: [PERMISSIONS.VIEW, PERMISSIONS.EDIT],
+        },
+        OR: [
+          {
+            title: {
+              contains: args.searchText,
+            },
+          },
+          {
+            title: {
+              contains:
+                args.searchText.charAt(0).toUpperCase() +
+                args.searchText.slice(1).toLowerCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toUpperCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toLowerCase(),
+            },
+          },
+        ],
+      },
+    });
+
   public getTotalFormsByUserId = (
     userId: string,
     args: Pick<
       GetFormsArgs,
-      'isDeleted' | 'isFavourite' | 'folderId' | 'teamId' | 'searchText'
+      | 'isDeleted'
+      | 'isFavourite'
+      | 'isSharedForms'
+      | 'folderId'
+      | 'teamId'
+      | 'searchText'
     >,
   ) =>
     prisma.form.count({
       where: {
         permissions: {
           path: [userId.toString()],
-          array_contains: [
-            PERMISSIONS.VIEW,
-            PERMISSIONS.EDIT,
-            PERMISSIONS.DELETE,
-          ],
+          array_contains: args.isSharedForms
+            ? [PERMISSIONS.VIEW, PERMISSIONS.EDIT]
+            : [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.DELETE],
         },
         folderId: args.folderId || undefined,
         teamId: args.teamId || null,
@@ -541,6 +626,58 @@ export class FormsService {
           folder: {
             disconnect: true,
           },
+        },
+      });
+    });
+
+  public addFormMember = (formId: string, memberId: string) =>
+    prisma.$transaction(async (tx) => {
+      // get current permissions in form
+      const form = await tx.form.findUnique({
+        where: {
+          id: formId,
+        },
+        select: {
+          permissions: true,
+        },
+      });
+      const formPermissions = form?.permissions as Prisma.JsonObject;
+
+      // update permissions for form
+      await tx.form.update({
+        where: {
+          id: formId,
+        },
+        data: {
+          permissions: {
+            ...formPermissions,
+            [memberId]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT],
+          },
+        },
+      });
+    });
+
+  public removeFormMember = (formId: string, memberIds: string[]) =>
+    prisma.$transaction(async (tx) => {
+      const form = await tx.form.findUnique({
+        where: {
+          id: formId,
+        },
+        select: {
+          permissions: true,
+        },
+      });
+      const formPermissions = form?.permissions as Prisma.JsonObject;
+
+      const newFormPermissions = _omit(formPermissions, memberIds);
+
+      // update permissions for form
+      await tx.form.update({
+        where: {
+          id: formId,
+        },
+        data: {
+          permissions: newFormPermissions,
         },
       });
     });

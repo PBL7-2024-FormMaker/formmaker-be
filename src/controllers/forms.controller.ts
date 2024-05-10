@@ -2,23 +2,29 @@ import { Folder, Form, Prisma, Team, User } from '@prisma/client';
 import { Response } from 'express';
 import status from 'http-status';
 
+import { getMailService, Mailer } from '@/infracstructure/mailer/mailer';
+import { AuthService, getAuthService } from '@/services/auth.service';
+
 import {
   ALLOWED_SORT_FORM_DIRECTIONS,
   ALLOWED_SORT_FORM_FIELDS,
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
   ERROR_MESSAGES,
+  FORM_ERROR_MESSAGES,
   FORM_SUCCESS_MESSAGES,
   SORT_FORM_DIRECTIONS,
   SORT_FORM_FIELDS,
   TEAM_ERROR_MESSAGES,
+  USER_ERROR_MESSAGES,
 } from '../constants';
 import {
+  AddFormMemberSchemaType,
   CreateFormSchemaType,
   GetFormsQueryParamsSchemaType,
+  RemoveFormMemberSchemaType,
   UpdateFormSchemaType,
 } from '../schemas/forms.schemas';
-import { FoldersService, getFoldersService } from '../services/folders.service';
 import { FormsService, getFormsService } from '../services/forms.service';
 import { getTeamsService, TeamsService } from '../services/teams.service';
 import { getUsersService, UsersService } from '../services/users.service';
@@ -46,13 +52,13 @@ export class FormsController {
   private formsService: FormsService;
   private usersService: UsersService;
   private teamsService: TeamsService;
-  private foldersService: FoldersService;
+  private authService: AuthService;
 
   public constructor() {
     this.formsService = getFormsService();
     this.usersService = getUsersService();
     this.teamsService = getTeamsService();
-    this.foldersService = getFoldersService();
+    this.authService = getAuthService();
   }
 
   public getAllForms = async (
@@ -68,6 +74,7 @@ export class FormsController {
         search: searchText = '',
         isDeleted: isDeletedParam,
         isFavourite: isFavouriteParam,
+        isSharedForms: isSharedFormsParam,
         sortField = SORT_FORM_FIELDS.CREATED_AT,
         sortDirection = SORT_FORM_DIRECTIONS.DESC,
         folderId,
@@ -76,6 +83,7 @@ export class FormsController {
 
       const isDeleted = isDeletedParam === 1;
       const isFavourite = isFavouriteParam === 1;
+      const isSharedForms = isSharedFormsParam === 1;
 
       if (!ALLOWED_SORT_FORM_FIELDS.includes(sortField)) {
         return errorResponse(
@@ -93,21 +101,26 @@ export class FormsController {
         );
       }
 
-      if (folderId) {
+      if (folderId && !isSharedForms) {
         await findFolderById(folderId);
       }
 
-      if (teamId) {
+      if (teamId && !isSharedForms) {
         await findTeamById(teamId);
       }
 
-      const totalForms = await this.formsService.getTotalFormsByUserId(userId, {
-        searchText,
-        isDeleted,
-        isFavourite,
-        folderId,
-        teamId,
-      });
+      const totalForms = isSharedForms
+        ? await this.formsService.getTotalSharedFormsByUserId(userId, {
+            searchText,
+          })
+        : await this.formsService.getTotalFormsByUserId(userId, {
+            searchText,
+            isDeleted,
+            isFavourite,
+            isSharedForms,
+            folderId,
+            teamId,
+          });
       const totalPages = Math.ceil(totalForms / pageSize);
 
       const offset = (page - 1) * pageSize;
@@ -119,10 +132,18 @@ export class FormsController {
         searchText,
         isDeleted,
         isFavourite,
+        isSharedForms,
         sortField,
         sortDirection,
         folderId,
         teamId,
+      });
+      const sharedForms = await this.formsService.getSharedFormsOfUser(userId, {
+        offset,
+        limit,
+        searchText,
+        sortField,
+        sortDirection,
       });
 
       const formsResponseData = forms.map((form) => {
@@ -135,7 +156,7 @@ export class FormsController {
       });
 
       const responseData = {
-        forms: formsResponseData,
+        forms: isSharedForms ? sharedForms : formsResponseData,
         page,
         pageSize,
         totalForms,
@@ -155,6 +176,146 @@ export class FormsController {
       const { form } = req.body;
 
       return successResponse(res, form);
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public getUsersInForm = async (
+    req: CustomRequest<{ form: Form }>,
+    res: Response,
+  ) => {
+    try {
+      const { form } = req.body;
+
+      const users = await this.usersService.getUsersByFormId(
+        form!.permissions as string[],
+      );
+      if (!users)
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.USER_NOT_FOUND,
+          status.NOT_FOUND,
+        );
+
+      return successResponse(res, users);
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public inviteFormMember = async (
+    req: CustomRequest<
+      AddFormMemberSchemaType & { form: Form } & { user: User }
+    >,
+    res: Response,
+  ) => {
+    try {
+      const { user, email, form } = req.body;
+
+      const foundUser = await this.authService.getUserByEmail(email);
+      if (!foundUser) {
+        return errorResponse(
+          res,
+          USER_ERROR_MESSAGES.USER_NOT_FOUND,
+          status.NOT_FOUND,
+        );
+      }
+
+      const users = await this.usersService.getUsersByFormId(
+        form!.permissions as string[],
+      );
+
+      const memberExistsInForm = users.find((user) => user.email === email);
+
+      if (memberExistsInForm) {
+        return errorResponse(
+          res,
+          FORM_ERROR_MESSAGES.USER_EXISTS_IN_FORM,
+          status.BAD_REQUEST,
+        );
+      }
+
+      await this.formsService.addFormMember(form.id, foundUser.id);
+
+      const invitedUrl = `${process.env.FRONT_END_URL}/build/${form.id}`;
+      try {
+        const mailer: Mailer = getMailService();
+        mailer.sendInviteToFormEmail(
+          email,
+          user.username,
+          form.title,
+          invitedUrl,
+        );
+        return successResponse(
+          res,
+          {},
+          FORM_SUCCESS_MESSAGES.ADD_FORM_MEMBER_SUCCESS,
+        );
+      } catch (error) {
+        return errorResponse(res, FORM_ERROR_MESSAGES.CAN_NOT_INVITE_USER, 500);
+      }
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public removeFormMember = async (
+    req: CustomRequest<RemoveFormMemberSchemaType & { form: Form }>,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+
+      const { memberIds, form } = req.body;
+
+      if (!canEdit(userId, form.permissions as Prisma.JsonObject)) {
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+      }
+
+      for (const memberId of memberIds) {
+        if (memberId === form.creatorId) {
+          return errorResponse(
+            res,
+            FORM_ERROR_MESSAGES.CAN_NOT_REMOVE_FORM_OWNER,
+            status.BAD_REQUEST,
+          );
+        }
+
+        const existingUser = await this.usersService.getUserByID(memberId);
+        if (!existingUser) {
+          return errorResponse(
+            res,
+            `User with ID: ${memberId} does not exist`,
+            status.BAD_REQUEST,
+          );
+        }
+        const users = await this.usersService.getUsersByFormId(
+          form!.permissions as string[],
+        );
+
+        const memberExistsInForm = users.find((user) => user.id === memberId);
+
+        if (!memberExistsInForm) {
+          return errorResponse(
+            res,
+            `User with ID: ${memberId} is not a member in the form`,
+            status.BAD_REQUEST,
+          );
+        }
+      }
+
+      await this.formsService.removeFormMember(form.id, memberIds);
+
+      return successResponse(
+        res,
+        {},
+        FORM_SUCCESS_MESSAGES.REMOVE_FORM_MEMBER_SUCCESS,
+      );
     } catch (error) {
       return errorResponse(res);
     }

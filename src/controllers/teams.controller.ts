@@ -208,6 +208,17 @@ export class TeamsController {
         );
       }
 
+      const memberExistsInTeam =
+        await this.teamsService.checkMemberExistsInTeam(team.id, userId);
+
+      if (memberExistsInTeam) {
+        return errorResponse(
+          res,
+          TEAM_ERROR_MESSAGES.USER_EXISTS_IN_TEAM,
+          status.BAD_REQUEST,
+        );
+      }
+
       const payload = {
         userId: userId,
         email: email,

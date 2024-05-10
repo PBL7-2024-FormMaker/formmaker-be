@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-import { ERROR_MESSAGES, FORM_ERROR_MESSAGES } from '../constants';
+import {
+  ERROR_MESSAGES,
+  FORM_ERROR_MESSAGES,
+  USER_ERROR_MESSAGES,
+} from '../constants';
 
 const settingsSchema = z
   .object(
@@ -744,6 +748,11 @@ export const GetFormsQueryParamsSchema = z
         invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
       })
       .nonnegative(ERROR_MESSAGES.NUMBER_MUST_BE_NONNEGATIVE),
+    isSharedForms: z
+      .number({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
+      })
+      .nonnegative(ERROR_MESSAGES.NUMBER_MUST_BE_NONNEGATIVE),
     sortField: z.string({
       invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
     }),
@@ -759,6 +768,28 @@ export const GetFormsQueryParamsSchema = z
   })
   .strict()
   .partial();
+
+export const AddFormMemberSchema = z.object({
+  email: z
+    .string({ required_error: ERROR_MESSAGES.REQUIRED_FIELD })
+    .trim()
+    .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD)
+    .email(USER_ERROR_MESSAGES.INVALID_EMAIL),
+});
+
+export const RemoveFormMemberSchema = z.object({
+  memberIds: z
+    .string({
+      required_error: ERROR_MESSAGES.REQUIRED_FIELD,
+      invalid_type_error: ERROR_MESSAGES.REQUIRED_ARRAY_TYPE,
+    })
+    .array()
+    .nonempty({ message: ERROR_MESSAGES.NO_EMPTY_FIELD }),
+});
+
+export type AddFormMemberSchemaType = z.infer<typeof AddFormMemberSchema>;
+
+export type RemoveFormMemberSchemaType = z.infer<typeof RemoveFormMemberSchema>;
 
 export type CreateFormSchemaType = z.infer<typeof CreateFormSchema>;
 

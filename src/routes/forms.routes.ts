@@ -11,9 +11,11 @@ import {
   checkMemberExistsInTeam,
   checkTeamExistence,
   checkUserExistence,
+  validateAddFormMemberSchema,
   validateConfigSchema,
   validateCreateFormSchema,
   validateGetFormQueryParamsSchema,
+  validateRemoveTeamMemberSchema,
   validateUpdateFormSchema,
   verifyToken,
 } from '../middlewares';
@@ -27,6 +29,27 @@ formsRoute.get(
   ROUTES.FORM.GET_FORM_DETAILS,
   checkFormExistence,
   formsController.getFormDetails,
+);
+formsRoute.get(
+  ROUTES.FORM.GET_USERS_IN_FORM,
+  checkFormExistence,
+  formsController.getUsersInForm,
+);
+formsRoute.post(
+  ROUTES.FORM.INVITE_MEMBER,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  validateAddFormMemberSchema,
+  formsController.inviteFormMember,
+);
+formsRoute.patch(
+  ROUTES.FORM.REMOVE_MEMBER,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  validateRemoveTeamMemberSchema,
+  formsController.removeFormMember,
 );
 formsRoute.get(
   ROUTES.ROOT.PATH,

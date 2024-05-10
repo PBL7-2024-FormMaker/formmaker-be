@@ -5,7 +5,12 @@ import {
   CreateFolderSchema,
   UpdateFolderSchema,
 } from '../schemas/folders.schemas';
-import { CreateFormSchema, UpdateFormSchema } from '../schemas/forms.schemas';
+import {
+  AddFormMemberSchema,
+  CreateFormSchema,
+  RemoveFormMemberSchema,
+  UpdateFormSchema,
+} from '../schemas/forms.schemas';
 import {
   AddTeamMemberSchema,
   CreateTeamSchema,
@@ -45,6 +50,8 @@ const validateUpdateUserInput = validate(UpdateUserSchema);
 
 const validateCreateFormSchema = validate(CreateFormSchema);
 const validateUpdateFormSchema = validate(UpdateFormSchema);
+const validateAddFormMemberSchema = validate(AddFormMemberSchema);
+const validateRemoveFormMemberSchema = validate(RemoveFormMemberSchema);
 
 const validateCreateFolderSchema = validate(CreateFolderSchema);
 const validateUpdateFolderSchema = validate(UpdateFolderSchema);
@@ -63,6 +70,7 @@ export {
   checkResponseExistence,
   checkTeamExistence,
   checkUserExistence,
+  validateAddFormMemberSchema,
   validateAddTeamMemberSchema,
   validateChangePasswordInput,
   validateConfigSchema,
@@ -74,6 +82,7 @@ export {
   validateForgotPasswordInput,
   validateGetFormQueryParamsSchema,
   validateLoginInput,
+  validateRemoveFormMemberSchema,
   validateRemoveTeamMemberSchema,
   validateResetPasswordInput,
   validateSignUpInput,
