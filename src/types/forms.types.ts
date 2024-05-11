@@ -4,7 +4,6 @@ export interface GetFormsArgs {
   searchText: string;
   isDeleted: boolean;
   isFavourite: boolean;
-  isSharedForms: boolean;
   sortField: string;
   sortDirection: string;
   folderId?: string;
@@ -34,4 +33,10 @@ export enum ELEMENT_TYPE {
   SCALE_RATING = 'Scale Rating',
   DIVIDER = 'Divider',
   PAGE_BREAK = 'Page Break',
+}
+
+export enum FormType {
+  All = 'all',
+  Shared = 'shared',
+  Owned = 'owned',
 }
