@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { FormType } from '@/types/forms.types';
+
 import {
   ERROR_MESSAGES,
   FORM_ERROR_MESSAGES,
@@ -748,11 +750,7 @@ export const GetFormsQueryParamsSchema = z
         invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
       })
       .nonnegative(ERROR_MESSAGES.NUMBER_MUST_BE_NONNEGATIVE),
-    isSharedForms: z
-      .number({
-        invalid_type_error: ERROR_MESSAGES.REQUIRED_NUMBER_TYPE,
-      })
-      .nonnegative(ERROR_MESSAGES.NUMBER_MUST_BE_NONNEGATIVE),
+    formType: z.nativeEnum(FormType),
     sortField: z.string({
       invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
     }),

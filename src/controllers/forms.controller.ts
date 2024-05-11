@@ -4,6 +4,7 @@ import status from 'http-status';
 
 import { getMailService, Mailer } from '@/infracstructure/mailer/mailer';
 import { AuthService, getAuthService } from '@/services/auth.service';
+import { FormType, GetFormsArgs } from '@/types/forms.types';
 
 import {
   ALLOWED_SORT_FORM_DIRECTIONS,
@@ -61,6 +62,66 @@ export class FormsController {
     this.authService = getAuthService();
   }
 
+  private getFormsByQuery = async (
+    args: GetFormsArgs & {
+      formType: FormType | undefined;
+      userId: string;
+    },
+  ) => {
+    const {
+      formType,
+      offset,
+      limit,
+      searchText,
+      isDeleted,
+      isFavourite,
+      sortField,
+      sortDirection,
+      folderId,
+      teamId,
+      userId,
+    } = args;
+
+    switch (formType) {
+      case FormType.All:
+        return this.formsService.getAllFormsByQuery(userId, {
+          offset,
+          limit,
+          searchText,
+          isDeleted,
+          sortField,
+          sortDirection,
+          folderId,
+          teamId,
+          isFavourite,
+        });
+      case FormType.Shared:
+        return this.formsService.getSharedFormsOfUser(userId, {
+          offset,
+          limit,
+          searchText,
+          isDeleted,
+          sortField,
+          sortDirection,
+          isFavourite,
+        });
+      case FormType.Owned:
+        return this.formsService.getFormsByUserId(userId, {
+          offset,
+          limit,
+          searchText,
+          isDeleted,
+          sortField,
+          sortDirection,
+          folderId,
+          teamId,
+          isFavourite,
+        });
+      default:
+        return [];
+    }
+  };
+
   public getAllForms = async (
     req: CustomRequest<unknown, GetFormsQueryParamsSchemaType>,
     res: Response,
@@ -74,7 +135,7 @@ export class FormsController {
         search: searchText = '',
         isDeleted: isDeletedParam,
         isFavourite: isFavouriteParam,
-        isSharedForms: isSharedFormsParam,
+        formType = FormType.Owned,
         sortField = SORT_FORM_FIELDS.CREATED_AT,
         sortDirection = SORT_FORM_DIRECTIONS.DESC,
         folderId,
@@ -83,7 +144,6 @@ export class FormsController {
 
       const isDeleted = isDeletedParam === 1;
       const isFavourite = isFavouriteParam === 1;
-      const isSharedForms = isSharedFormsParam === 1;
 
       if (!ALLOWED_SORT_FORM_FIELDS.includes(sortField)) {
         return errorResponse(
@@ -101,50 +161,32 @@ export class FormsController {
         );
       }
 
-      if (folderId && !isSharedForms) {
+      if (folderId && formType !== FormType.Shared) {
         await findFolderById(folderId);
       }
 
-      if (teamId && !isSharedForms) {
+      if (teamId && formType !== FormType.Shared) {
         await findTeamById(teamId);
       }
-
-      const totalForms = isSharedForms
-        ? await this.formsService.getTotalSharedFormsByUserId(userId, {
-            searchText,
-          })
-        : await this.formsService.getTotalFormsByUserId(userId, {
-            searchText,
-            isDeleted,
-            isFavourite,
-            isSharedForms,
-            folderId,
-            teamId,
-          });
-      const totalPages = Math.ceil(totalForms / pageSize);
 
       const offset = (page - 1) * pageSize;
       const limit = pageSize;
 
-      const forms = await this.formsService.getFormsByUserId(userId, {
+      const forms = await this.getFormsByQuery({
+        userId,
         offset,
         limit,
         searchText,
-        isDeleted,
+        formType,
         isFavourite,
-        isSharedForms,
+        isDeleted,
         sortField,
         sortDirection,
         folderId,
         teamId,
       });
-      const sharedForms = await this.formsService.getSharedFormsOfUser(userId, {
-        offset,
-        limit,
-        searchText,
-        sortField,
-        sortDirection,
-      });
+
+      const totalPages = Math.ceil(forms.length / pageSize);
 
       const formsResponseData = forms.map((form) => {
         const isFavourite =
@@ -156,10 +198,10 @@ export class FormsController {
       });
 
       const responseData = {
-        forms: isSharedForms ? sharedForms : formsResponseData,
+        forms: formsResponseData,
         page,
         pageSize,
-        totalForms,
+        totalForms: forms.length,
         totalPages,
       };
       return successResponse(res, responseData);

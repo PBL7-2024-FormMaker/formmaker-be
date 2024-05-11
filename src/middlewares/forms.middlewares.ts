@@ -31,7 +31,7 @@ import {
   timeConfigSchema,
 } from '../schemas/forms.schemas';
 import { ElementsSchema } from '../schemas/forms.schemas';
-import { ELEMENT_TYPE } from '../types/forms.types';
+import { ELEMENT_TYPE, FormType } from '../types/forms.types';
 import { errorResponse, findFormById, validateData } from '../utils';
 
 export const validateConfigSchema = async (
@@ -320,7 +320,7 @@ export const validateGetFormQueryParamsSchema = async (
       pageSize: pageSizeParam,
       isDeleted: isDeletedParam,
       isFavourite: isFavouriteParam,
-      isSharedForms: isSharedFormsParam,
+      formType,
       folderId: folderIdParam,
       teamId: teamIdParam,
     } = req.query;
@@ -333,9 +333,7 @@ export const validateGetFormQueryParamsSchema = async (
       pageSize: pageSizeParam ? Number(pageSizeParam) : undefined,
       isDeleted: isDeletedParam ? Number(isDeletedParam) : undefined,
       isFavourite: isFavouriteParam ? Number(isFavouriteParam) : undefined,
-      isSharedForms: isSharedFormsParam
-        ? Number(isSharedFormsParam)
-        : undefined,
+      formType: formType || FormType.Owned,
       folderId: folderIdParam ? folderIdParam : undefined,
       teamId: teamIdParam ? teamIdParam : undefined,
     };

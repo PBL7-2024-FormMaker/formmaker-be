@@ -179,6 +179,65 @@ export class FormsService {
       return createdForm;
     });
 
+  public getAllFormsByQuery = (userId: string, args: GetFormsArgs) =>
+    prisma.form.findMany({
+      skip: args.offset,
+      take: args.limit,
+      where: {
+        permissions: {
+          path: [userId.toString()],
+          array_contains: [PERMISSIONS.VIEW, PERMISSIONS.EDIT],
+        },
+        folderId: args.folderId || undefined,
+        teamId: args.teamId || null,
+        OR: [
+          {
+            title: {
+              contains: args.searchText,
+            },
+          },
+          {
+            title: {
+              contains:
+                args.searchText.charAt(0).toUpperCase() +
+                args.searchText.slice(1).toLowerCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toUpperCase(),
+            },
+          },
+          {
+            title: {
+              contains: args.searchText.toLowerCase(),
+            },
+          },
+        ],
+        deletedAt: args.isDeleted ? { not: null } : null,
+        favouritedByUsers: args.isFavourite
+          ? { some: { id: userId } }
+          : undefined,
+      },
+      orderBy: {
+        [args.sortField]: args.sortDirection,
+      },
+      include: {
+        favouritedByUsers: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
   public getFormsByUserId = (userId: string, args: GetFormsArgs) =>
     prisma.form.findMany({
       skip: args.offset,
@@ -244,12 +303,9 @@ export class FormsService {
 
   public getSharedFormsOfUser = async (
     userId: string,
-    args: Omit<
-      GetFormsArgs,
-      'isDeleted' | 'isFavourite' | 'isSharedForms' | 'folderId' | 'teamId'
-    >,
-  ) =>
-    prisma.form.findMany({
+    args: Omit<GetFormsArgs, 'isSharedForms' | 'folderId' | 'teamId'>,
+  ) => {
+    const data = await prisma.form.findMany({
       skip: args.offset,
       take: +args.limit,
       where: {
@@ -281,101 +337,31 @@ export class FormsService {
             },
           },
         ],
-      },
-      orderBy: {
-        [args.sortField]: args.sortDirection,
-      },
-    });
-
-  public getTotalSharedFormsByUserId = (
-    userId: string,
-    args: Pick<GetFormsArgs, 'searchText'>,
-  ) =>
-    prisma.form.count({
-      where: {
-        permissions: {
-          path: [userId.toString()],
-          array_contains: [PERMISSIONS.VIEW, PERMISSIONS.EDIT],
-        },
-        OR: [
-          {
-            title: {
-              contains: args.searchText,
-            },
-          },
-          {
-            title: {
-              contains:
-                args.searchText.charAt(0).toUpperCase() +
-                args.searchText.slice(1).toLowerCase(),
-            },
-          },
-          {
-            title: {
-              contains: args.searchText.toUpperCase(),
-            },
-          },
-          {
-            title: {
-              contains: args.searchText.toLowerCase(),
-            },
-          },
-        ],
-      },
-    });
-
-  public getTotalFormsByUserId = (
-    userId: string,
-    args: Pick<
-      GetFormsArgs,
-      | 'isDeleted'
-      | 'isFavourite'
-      | 'isSharedForms'
-      | 'folderId'
-      | 'teamId'
-      | 'searchText'
-    >,
-  ) =>
-    prisma.form.count({
-      where: {
-        permissions: {
-          path: [userId.toString()],
-          array_contains: args.isSharedForms
-            ? [PERMISSIONS.VIEW, PERMISSIONS.EDIT]
-            : [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.DELETE],
-        },
-        folderId: args.folderId || undefined,
-        teamId: args.teamId || null,
-        OR: [
-          {
-            title: {
-              contains: args.searchText,
-            },
-          },
-          {
-            title: {
-              contains:
-                args.searchText.charAt(0).toUpperCase() +
-                args.searchText.slice(1).toLowerCase(),
-            },
-          },
-          {
-            title: {
-              contains: args.searchText.toUpperCase(),
-            },
-          },
-          {
-            title: {
-              contains: args.searchText.toLowerCase(),
-            },
-          },
-        ],
         deletedAt: args.isDeleted ? { not: null } : null,
         favouritedByUsers: args.isFavourite
           ? { some: { id: userId } }
           : undefined,
       },
+      orderBy: {
+        [args.sortField]: args.sortDirection,
+      },
+      include: {
+        favouritedByUsers: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+      },
     });
+
+    return data.filter((form) => {
+      const permissions = (form.permissions as Prisma.JsonObject)[
+        userId
+      ] as string[];
+      return permissions && !permissions.includes('delete');
+    });
+  };
 
   public getFormById = (formId: string) =>
     prisma.form.findUnique({
