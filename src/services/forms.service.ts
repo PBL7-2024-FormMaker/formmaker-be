@@ -392,6 +392,20 @@ export class FormsService {
         disabled: disabled,
       },
     });
+  public updateSpecificDate = (
+    formId: string,
+    disabledOnSpecificDate: boolean,
+    specificDate: Date,
+  ) =>
+    prisma.form.update({
+      where: {
+        id: formId,
+      },
+      data: {
+        disabledOnSpecificDate: disabledOnSpecificDate,
+        specificDate: specificDate,
+      },
+    });
 
   public updateDisabledNotificationStatus = (
     formId: string,

@@ -104,6 +104,13 @@ formsRoute.patch(
   formsController.updateDisabledStatus,
 );
 formsRoute.patch(
+  ROUTES.FORM.UPDATE_DISABLE_ON_SPECIFIC_DATE,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  formsController.updateDisableOnSpecificDate,
+);
+formsRoute.patch(
   ROUTES.FORM.UPDATE_DISABLED_NOTIFICATION_STATUS,
   verifyToken,
   checkUserExistence,
