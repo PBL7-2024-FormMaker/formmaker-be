@@ -207,9 +207,13 @@ export class TeamsController {
           status.FORBIDDEN,
         );
       }
+      const invitedUser = await this.authService.getUserByEmail(email);
 
       const memberExistsInTeam =
-        await this.teamsService.checkMemberExistsInTeam(team.id, userId);
+        await this.teamsService.checkMemberExistsInTeam(
+          team.id,
+          invitedUser!.id,
+        );
 
       if (memberExistsInTeam) {
         return errorResponse(
