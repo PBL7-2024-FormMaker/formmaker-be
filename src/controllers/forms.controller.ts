@@ -216,8 +216,16 @@ export class FormsController {
   ) => {
     try {
       const { form } = req.body;
-
-      return successResponse(res, form);
+      if (form.disabledOnSpecificDate) {
+        const scheduledTime = new Date(form.specificDate).getTime();
+        //TODO: UPDATE FOLLOWING DATABASE DEPLOYED
+        const now = new Date().getTime();
+        if (scheduledTime - now < 0 || scheduledTime - now === 0) {
+          await this.formsService.updateDisabledStatus(form.id, true);
+        }
+      }
+      const updatedForm = await this.formsService.getFormById(form.id);
+      return successResponse(res, updatedForm);
     } catch (error) {
       return errorResponse(res);
     }
@@ -553,6 +561,40 @@ export class FormsController {
       return errorResponse(res);
     }
   };
+  public updateDisableOnSpecificDate = async (
+    req: CustomRequest<{ form: Form; user: User; specificDate: Date }>,
+    res: Response,
+  ) => {
+    try {
+      const { form, user, specificDate } = req.body;
+      if (form.creatorId !== user.id)
+        return errorResponse(
+          res,
+          ERROR_MESSAGES.ACCESS_DENIED,
+          status.FORBIDDEN,
+        );
+
+      const { disabledOnSpecificDate } = req.params;
+      await this.formsService.updateSpecificDate(
+        form.id,
+        disabledOnSpecificDate.toLowerCase() === 'true',
+        specificDate,
+      );
+      if (disabledOnSpecificDate.toLowerCase() === 'true') {
+        if (form.disabled) {
+          await this.formsService.updateDisabledStatus(form.id, false);
+        }
+      }
+      const updatedForm = await this.formsService.getFormById(form.id);
+      return successResponse(
+        res,
+        updatedForm,
+        FORM_SUCCESS_MESSAGES.UPDATE_FORM_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
   public updateDisabledNotificationStatus = async (
     req: CustomRequest<{ form: Form; user: User }>,
     res: Response,
@@ -566,9 +608,7 @@ export class FormsController {
           ERROR_MESSAGES.ACCESS_DENIED,
           status.FORBIDDEN,
         );
-
       const { disabledNotification } = req.params;
-      console.log(disabledNotification);
       const updatedForm =
         await this.formsService.updateDisabledNotificationStatus(
           form.id,

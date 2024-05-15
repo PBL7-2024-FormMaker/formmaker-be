@@ -31,6 +31,8 @@ export const ROUTES = {
     UPDATE_FORM: '/:formId',
     DELETE_FORM: '/:formId',
     UPDATE_DISABLED_STATUS: '/:formId/disabled/:disabled',
+    UPDATE_DISABLE_ON_SPECIFIC_DATE:
+      '/:formId/disabled-on-specific-date/:disabledOnSpecificDate',
     UPDATE_DISABLED_NOTIFICATION_STATUS:
       '/:formId/disabled-notification/:disabledNotification',
     RESTORE_FORM: '/:formId/restore',
