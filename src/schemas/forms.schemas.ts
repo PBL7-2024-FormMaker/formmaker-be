@@ -493,11 +493,7 @@ export const numberConfigSchema = z
 
 export const imageConfigSchema = z
   .object({
-    image: z
-      .string({
-        required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_IMAGE_CONFIG,
-      })
-      .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
+    image: z.string(),
     size: z
       .object(
         {
