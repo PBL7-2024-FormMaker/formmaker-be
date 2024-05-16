@@ -192,3 +192,9 @@ export const RESPONSES_ERROR_MESSAGES = {
   FORM_NOT_ACCEPTING_RESPONSES:
     'This form is currently not accepting responses',
 } as const;
+
+export const OPEN_AI_SUCCESS_MESSAGES = {} as const;
+
+export const OPEN_AI_ERROR_MESSAGES = {
+  REQUIRED_QUESTIONS: 'questions must be provided',
+} as const;

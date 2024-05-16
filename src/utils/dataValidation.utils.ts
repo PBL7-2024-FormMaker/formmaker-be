@@ -14,3 +14,11 @@ export const validateData = async (
     return { error: err };
   }
 };
+
+export const checkRequiredEnvVars = (requiredEnvVars: string[]) => {
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      throw new Error(`Missing ${envVar} in environment variables.`);
+    }
+  }
+};

@@ -423,6 +423,11 @@ export const singleChoiceConfigSchema = z
       )
       .strict()
       .optional(),
+    sublabel: z
+      .string({
+        required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_NUMBER_CONFIG,
+      })
+      .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
   })
   .strict();
 
@@ -469,6 +474,11 @@ export const multipleChoiceConfigSchema = z
       )
       .strict()
       .optional(),
+    sublabel: z
+      .string({
+        required_error: FORM_ERROR_MESSAGES.REQUIRED_FIELD_IN_NUMBER_CONFIG,
+      })
+      .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
   })
   .strict();
 

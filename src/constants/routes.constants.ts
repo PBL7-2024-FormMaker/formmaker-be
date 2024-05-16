@@ -73,4 +73,8 @@ export const ROUTES = {
     DELETE_RESPONSE: '/:formId/:responseId',
     DELETE_MANY_RESPONSES: '/:formId',
   },
+  OPEN_AI: {
+    PATH: '/open-ai',
+    GET_QUESTION: '/get-question',
+  },
 };
