@@ -122,6 +122,66 @@ export class FormsController {
     }
   };
 
+  private getTotalFormsByQuery = async (
+    args: GetFormsArgs & {
+      formType: FormType | undefined;
+      userId: string;
+    },
+  ) => {
+    const {
+      formType,
+      offset,
+      limit,
+      searchText,
+      isDeleted,
+      isFavourite,
+      sortField,
+      sortDirection,
+      folderId,
+      teamId,
+      userId,
+    } = args;
+
+    switch (formType) {
+      case FormType.All:
+        return this.formsService.getTotalFormsByQuery(userId, {
+          offset,
+          limit,
+          searchText,
+          isDeleted,
+          sortField,
+          sortDirection,
+          folderId,
+          teamId,
+          isFavourite,
+        });
+      case FormType.Shared:
+        return this.formsService.getTotalSharedFormsOfUser(userId, {
+          offset,
+          limit,
+          searchText,
+          isDeleted,
+          sortField,
+          sortDirection,
+          isFavourite,
+        });
+      case FormType.Owned:
+        return this.formsService.getTotalFormsByUserId(userId, {
+          offset,
+          limit,
+          searchText,
+          isDeleted,
+          sortField,
+          sortDirection,
+          folderId,
+          teamId,
+          isFavourite,
+        });
+      default:
+        return 0;
+    }
+  };
+
   public getAllForms = async (
     req: CustomRequest<unknown, GetFormsQueryParamsSchemaType>,
     res: Response,
@@ -185,8 +245,21 @@ export class FormsController {
         folderId,
         teamId,
       });
+      const totalForms = await this.getTotalFormsByQuery({
+        userId,
+        offset,
+        limit,
+        searchText,
+        formType,
+        isFavourite,
+        isDeleted,
+        sortField,
+        sortDirection,
+        folderId,
+        teamId,
+      });
 
-      const totalPages = Math.ceil(forms.length / pageSize);
+      const totalPages = Math.ceil(totalForms / pageSize);
 
       const formsResponseData = forms.map((form) => {
         const isFavourite =
@@ -201,7 +274,7 @@ export class FormsController {
         forms: formsResponseData,
         page,
         pageSize,
-        totalForms: forms.length,
+        totalForms: totalForms,
         totalPages,
       };
       return successResponse(res, responseData);
