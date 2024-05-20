@@ -141,6 +141,15 @@ export const IMAGE_SUCCESS_MESSAGES = {
   UPLOAD_FILE_SUCCESS: 'Upload file successfully',
 };
 
+export const FILE_ERROR_MESSAGES = {
+  ERROR_UPLOADING_FILE: 'Error uploading file',
+  NO_FILE_UPLOADED: 'No file uploaded',
+};
+
+export const FILE_SUCCESS_MESSAGES = {
+  UPLOAD_FILE_SUCCESS: 'Upload file successfully',
+};
+
 export const FOLDER_SUCCESS_MESSAGES = {
   CREATE_FOLDER_SUCCESS: 'Folder created successfully',
   UPDATE_FOLDER_SUCCESS: 'Folder updated successfully',
