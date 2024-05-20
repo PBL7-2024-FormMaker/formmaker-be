@@ -22,6 +22,10 @@ export const ROUTES = {
     PATH: '/images',
     UPLOAD: '/upload',
   },
+  FILE: {
+    PATH: '/files',
+    UPLOAD: '/upload',
+  },
   FORM: {
     PATH: '/forms',
     GET_FORM_DETAILS: '/:formId',
