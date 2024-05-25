@@ -18,6 +18,7 @@ import {
   SORT_FORM_FIELDS,
   TEAM_ERROR_MESSAGES,
   USER_ERROR_MESSAGES,
+  USER_SUCCESS_MESSAGES,
 } from '../constants';
 import {
   AddFormMemberSchemaType,
@@ -33,6 +34,7 @@ import { CustomRequest } from '../types/customRequest.types';
 import {
   canDelete,
   canEdit,
+  createJWT,
   errorResponse,
   findFolderById,
   findTeamById,
@@ -327,14 +329,12 @@ export class FormsController {
     }
   };
 
-  public inviteFormMember = async (
-    req: CustomRequest<
-      AddFormMemberSchemaType & { form: Form } & { user: User }
-    >,
+  public addFormMember = async (
+    req: CustomRequest<AddFormMemberSchemaType & { form: Form }>,
     res: Response,
   ) => {
     try {
-      const { user, email, form } = req.body;
+      const { email, form } = req.body;
 
       const foundUser = await this.authService.getUserByEmail(email);
       if (!foundUser) {
@@ -361,7 +361,50 @@ export class FormsController {
 
       await this.formsService.addFormMember(form.id, foundUser.id);
 
-      const invitedUrl = `${process.env.FRONT_END_URL}/build/${form.id}`;
+      return successResponse(
+        res,
+        {},
+        FORM_SUCCESS_MESSAGES.ADD_FORM_MEMBER_SUCCESS,
+      );
+    } catch (error) {
+      return errorResponse(res);
+    }
+  };
+
+  public inviteFormMember = async (
+    req: CustomRequest<
+      AddFormMemberSchemaType & { form: Form } & { user: User }
+    >,
+    res: Response,
+  ) => {
+    try {
+      const { userId } = req.session;
+
+      const { user, email, form } = req.body;
+
+      const users = await this.usersService.getUsersByFormId(
+        form!.permissions as string[],
+      );
+
+      const memberExistsInForm = users.find((user) => user.email === email);
+
+      if (memberExistsInForm) {
+        return errorResponse(
+          res,
+          FORM_ERROR_MESSAGES.USER_EXISTS_IN_FORM,
+          status.BAD_REQUEST,
+        );
+      }
+
+      const payload = {
+        userId: userId,
+        email: email,
+        form: form,
+        senderName: user.username,
+      };
+      const acceptedToken = createJWT(payload);
+      const invitedUrl = `${process.env.FRONT_END_URL}/sharing-form/${form.id}?view-invitation=true&token=${acceptedToken}`;
+
       try {
         const mailer: Mailer = getMailService();
         mailer.sendInviteToFormEmail(
@@ -372,8 +415,8 @@ export class FormsController {
         );
         return successResponse(
           res,
-          {},
-          FORM_SUCCESS_MESSAGES.ADD_FORM_MEMBER_SUCCESS,
+          invitedUrl,
+          USER_SUCCESS_MESSAGES.SENT_EMAIL_SUCCESS,
         );
       } catch (error) {
         return errorResponse(res, FORM_ERROR_MESSAGES.CAN_NOT_INVITE_USER, 500);
