@@ -31,6 +31,7 @@ export const ROUTES = {
     GET_FORM_DETAILS: '/:formId',
     GET_USERS_IN_FORM: '/:formId/members',
     INVITE_MEMBER: '/:formId/invite-member',
+    ADD_MEMBER: '/:formId/add-member',
     REMOVE_MEMBER: '/:formId/remove-member',
     UPDATE_FORM: '/:formId',
     DELETE_FORM: '/:formId',

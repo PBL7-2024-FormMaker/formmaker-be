@@ -44,6 +44,14 @@ formsRoute.post(
   formsController.inviteFormMember,
 );
 formsRoute.patch(
+  ROUTES.FORM.ADD_MEMBER,
+  verifyToken,
+  checkUserExistence,
+  checkFormExistence,
+  validateAddFormMemberSchema,
+  formsController.addFormMember,
+);
+formsRoute.patch(
   ROUTES.FORM.REMOVE_MEMBER,
   verifyToken,
   checkUserExistence,
