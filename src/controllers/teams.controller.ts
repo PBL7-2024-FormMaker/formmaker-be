@@ -209,18 +209,20 @@ export class TeamsController {
       }
       const invitedUser = await this.authService.getUserByEmail(email);
 
-      const memberExistsInTeam =
-        await this.teamsService.checkMemberExistsInTeam(
-          team.id,
-          invitedUser!.id,
-        );
+      if (invitedUser) {
+        const memberExistsInTeam =
+          await this.teamsService.checkMemberExistsInTeam(
+            team.id,
+            invitedUser.id,
+          );
 
-      if (memberExistsInTeam) {
-        return errorResponse(
-          res,
-          TEAM_ERROR_MESSAGES.USER_EXISTS_IN_TEAM,
-          status.BAD_REQUEST,
-        );
+        if (memberExistsInTeam) {
+          return errorResponse(
+            res,
+            TEAM_ERROR_MESSAGES.USER_EXISTS_IN_TEAM,
+            status.BAD_REQUEST,
+          );
+        }
       }
 
       const payload = {
