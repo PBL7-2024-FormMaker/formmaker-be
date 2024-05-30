@@ -70,6 +70,7 @@ model Folder {
   forms       Form[]
   team        Team?     @relation(fields: [teamId], references: [id])
   teamId      String?
+  color       String?
 
   @@map("folders")
 }

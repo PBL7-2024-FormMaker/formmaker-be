@@ -233,6 +233,7 @@ export class FormsService {
           select: {
             id: true,
             name: true,
+            color: true,
           },
         },
       },
@@ -296,6 +297,7 @@ export class FormsService {
           select: {
             id: true,
             name: true,
+            color: true,
           },
         },
       },
