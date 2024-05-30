@@ -146,11 +146,12 @@ export class FoldersController {
         );
       }
 
-      const { name } = req.body;
+      const { name, color } = req.body;
 
       const updatedFolder = await this.foldersService.updateFolder(
         folder.id,
         name,
+        color,
       );
       return successResponse(
         res,

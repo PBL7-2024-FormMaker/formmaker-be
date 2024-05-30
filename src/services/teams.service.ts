@@ -47,6 +47,7 @@ export class TeamsService {
           select: {
             id: true,
             name: true,
+            color: true,
           },
         },
       },
@@ -107,6 +108,7 @@ export class TeamsService {
           select: {
             id: true,
             name: true,
+            color: true,
           },
         },
       },

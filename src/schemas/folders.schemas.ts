@@ -18,6 +18,11 @@ export const UpdateFolderSchema = z
         invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
       })
       .min(1, ERROR_MESSAGES.NO_EMPTY_FIELD),
+    color: z
+      .string({
+        invalid_type_error: ERROR_MESSAGES.REQUIRED_STRING_TYPE,
+      })
+      .optional(),
   })
   .partial()
   .refine((data) => Object.keys(data).length > 0, {
