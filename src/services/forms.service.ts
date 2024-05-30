@@ -306,8 +306,6 @@ export class FormsService {
     args: Omit<GetFormsArgs, 'isSharedForms' | 'folderId' | 'teamId'>,
   ) => {
     const data = await prisma.form.findMany({
-      skip: args.offset,
-      take: +args.limit,
       where: {
         permissions: {
           path: [userId.toString()],
@@ -355,12 +353,14 @@ export class FormsService {
       },
     });
 
-    return data.filter((form) => {
-      const permissions = (form.permissions as Prisma.JsonObject)[
-        userId
-      ] as string[];
-      return permissions && !permissions.includes('delete');
-    });
+    return data
+      .filter((form) => {
+        const permissions = (form.permissions as Prisma.JsonObject)[
+          userId
+        ] as string[];
+        return permissions && !permissions.includes('delete');
+      })
+      .slice(args.offset, args.offset + args.limit);
   };
 
   public getTotalFormsByQuery = (userId: string, args: GetFormsArgs) =>
