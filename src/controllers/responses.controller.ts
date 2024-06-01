@@ -8,7 +8,6 @@ import {
   RESPONSES_SUCCESS_MESSAGES,
   SORT_DIRECTIONS,
   USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
 } from '@/constants';
 import { getMailService, Mailer } from '@/infracstructure/mailer/mailer';
 import { CreatedResponseSchema } from '@/schemas/createResponse.schemas';
@@ -192,7 +191,7 @@ export class ResponsesController {
           return successResponse(
             res,
             createdResponse,
-            USER_SUCCESS_MESSAGES.SENT_EMAIL_SUCCESS,
+            RESPONSES_SUCCESS_MESSAGES.RESPONSE_CREATED,
             status.CREATED,
           );
         } catch (error) {
