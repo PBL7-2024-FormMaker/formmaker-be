@@ -133,6 +133,16 @@ export class FoldersService {
         },
       });
 
+      // Delete related responses for each form
+      const deleteResponsesPromises = formsInFolder.map((form) =>
+        tx.response.deleteMany({
+          where: {
+            formId: form.id,
+          },
+        }),
+      );
+      await Promise.all(deleteResponsesPromises);
+
       // Delete each form sequentially
       const deleteFormPromises = formsInFolder.map((form) =>
         tx.form.delete({
