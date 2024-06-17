@@ -48,6 +48,7 @@ export class TeamsService {
             id: true,
             name: true,
             color: true,
+            teamId: true,
           },
         },
       },
