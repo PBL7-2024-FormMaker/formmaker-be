@@ -199,10 +199,10 @@ export class TeamsService {
     return team !== null;
   };
 
-  public addTeamMember = (teamId: string, memberId: string) =>
-    prisma.$transaction(async (tx) => {
-      // get current permissions in team
-      const team = await tx.team.findUnique({
+  public addTeamMember = async (teamId: string, memberId: string) => {
+    try {
+      // Step 1: Get current permissions in team
+      const team = await prisma.team.findUnique({
         where: {
           id: teamId,
         },
@@ -212,34 +212,42 @@ export class TeamsService {
       });
       const teamPermissions = team?.permissions as Prisma.JsonObject;
 
-      // add member to team and update permissions for team
-      await tx.team.update({
-        where: {
-          id: teamId,
-        },
-        data: {
-          members: {
-            connect: {
-              id: memberId,
-            },
-          },
-          permissions: {
-            ...teamPermissions,
-            [memberId]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT],
-          },
-        },
-      });
-
-      // get all forms in team
-      const formsInTeam = await tx.form.findMany({
+      // Step 2: Get all forms in team
+      const formsInTeam = await prisma.form.findMany({
         where: {
           teamId,
         },
       });
 
-      // update permissions for all forms
-      await Promise.all(
-        formsInTeam.map(async (item) => {
+      // Step 3: Get all folders in team
+      const foldersInTeam = await prisma.folder.findMany({
+        where: {
+          teamId,
+        },
+      });
+
+      // Step 4: Update the permissions in a transaction
+      await prisma.$transaction(async (tx) => {
+        // Update permissions for the team
+        await tx.team.update({
+          where: {
+            id: teamId,
+          },
+          data: {
+            members: {
+              connect: {
+                id: memberId,
+              },
+            },
+            permissions: {
+              ...teamPermissions,
+              [memberId]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT],
+            },
+          },
+        });
+
+        // Update permissions for all forms
+        for (const item of formsInTeam) {
           const form = await tx.form.findUnique({
             where: {
               id: item.id,
@@ -264,19 +272,10 @@ export class TeamsService {
               },
             },
           });
-        }),
-      );
+        }
 
-      // get all folders in team
-      const foldersInTeam = await tx.folder.findMany({
-        where: {
-          teamId,
-        },
-      });
-
-      // update permissions for all folders
-      await Promise.all(
-        foldersInTeam.map(async (item) => {
+        // Update permissions for all folders
+        for (const item of foldersInTeam) {
           const folder = await tx.folder.findUnique({
             where: {
               id: item.id,
@@ -301,13 +300,17 @@ export class TeamsService {
               },
             },
           });
-        }),
-      );
-    });
+        }
+      });
+    } catch (error) {
+      console.log({ error });
+    }
+  };
 
-  public removeTeamMember = (teamId: string, memberIds: string[]) =>
-    prisma.$transaction(async (tx) => {
-      const team = await tx.team.findUnique({
+  public removeTeamMember = async (teamId: string, memberIds: string[]) => {
+    try {
+      // Step 1: Get current permissions in team
+      const team = await prisma.team.findUnique({
         where: {
           id: teamId,
         },
@@ -316,50 +319,55 @@ export class TeamsService {
         },
       });
       const teamPermissions = team?.permissions as Prisma.JsonObject;
-
       const newTeamPermissions = _omit(teamPermissions, memberIds);
 
-      // remove members from team and update permissions for team
-      await tx.team.update({
+      // Step 2: Get all forms in team
+      const formsInTeam = await prisma.form.findMany({
         where: {
-          id: teamId,
+          teamId,
         },
-        data: {
-          members: {
-            disconnect: memberIds.map((memberId) => ({
-              id: memberId,
-            })),
+      });
+
+      // Step 3: Get all folders in team
+      const foldersInTeam = await prisma.folder.findMany({
+        where: {
+          teamId,
+        },
+      });
+
+      // Step 4: Update the permissions in a transaction
+      await prisma.$transaction(async (tx) => {
+        // Remove members from team and update permissions for team
+        await tx.team.update({
+          where: {
+            id: teamId,
           },
-          permissions: newTeamPermissions,
-        },
+          data: {
+            members: {
+              disconnect: memberIds.map((memberId) => ({
+                id: memberId,
+              })),
+            },
+            permissions: newTeamPermissions,
+          },
+        });
+
+        // Update permissions for all forms
+        for (const form of formsInTeam) {
+          await this.formsService.removeFormPermissions(tx, form.id, memberIds);
+        }
+
+        // Update permissions for all folders
+        for (const folder of foldersInTeam) {
+          await this.foldersService.removeFolderPermissions(
+            tx,
+            folder.id,
+            memberIds,
+          );
+        }
       });
-
-      // get all forms in team
-      const formsInTeam = await tx.form.findMany({
-        where: {
-          teamId,
-        },
-      });
-
-      // update permissions for all forms
-      await Promise.all(
-        formsInTeam.map((form) =>
-          this.formsService.removeFormPermissions(tx, form.id, memberIds),
-        ),
-      );
-
-      // get all folders in team
-      const foldersInTeam = await tx.folder.findMany({
-        where: {
-          teamId,
-        },
-      });
-
-      // update permissions for all folders
-      await Promise.all(
-        foldersInTeam.map((folder) =>
-          this.foldersService.removeFolderPermissions(tx, folder.id, memberIds),
-        ),
-      );
-    });
+    } catch (error) {
+      console.log({ error });
+    }
+  };
 }

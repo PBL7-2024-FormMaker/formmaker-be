@@ -64,6 +64,7 @@
     "@types/cors": "^2.8.17",
     "@types/lodash.isundefined": "^3.0.9",
     "@types/lodash.tostring": "^4.1.9",
+    "@types/socket.io": "^3.0.2",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.0.1",
     "cors": "^2.8.5",
@@ -86,6 +87,7 @@
     "openai": "^4.46.1",
     "path": "^0.12.7",
     "prisma": "^5.8.1",
+    "socket.io": "^4.7.5",
     "tsconfig-paths": "^4.2.0",
     "yaml": "^2.3.4",
     "zod": "^3.22.4"

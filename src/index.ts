@@ -1,7 +1,10 @@
+import { createServer } from 'http';
+
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import { NOT_FOUND } from 'http-status';
+import { Server } from 'socket.io';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
@@ -22,6 +25,15 @@ import { errorResponse } from './utils';
 dotenv.config();
 
 const app = express();
+const server = createServer(app);
+export const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+  },
+});
 
 const options: swaggerJSDoc.Options = {
   swaggerDefinition,
@@ -56,6 +68,15 @@ app.use((req: Request, res: Response) =>
   errorResponse(res, ERROR_MESSAGES.NOT_FOUND_ROUTES, NOT_FOUND),
 );
 
-app.listen(PORT, () => {
-  console.log(`Server listened in port ${PORT}, http://localhost:${PORT}`);
+// Room support
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

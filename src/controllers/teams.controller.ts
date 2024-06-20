@@ -22,6 +22,7 @@ import { AuthService, getAuthService } from '../services/auth.service';
 import { getTeamsService, TeamsService } from '../services/teams.service';
 import { getUsersService, UsersService } from '../services/users.service';
 import { canEdit, createJWT, errorResponse, successResponse } from '../utils';
+import { io } from '..';
 
 let instance: TeamsController | null = null;
 
@@ -179,6 +180,9 @@ export class TeamsController {
 
       await this.teamsService.addTeamMember(team.id, foundUser.id);
 
+      // Phát sự kiện khi có thay đổi trong danh sách thành viên của team
+      io.emit(team.id, 'teamMemberUpdate');
+
       return successResponse(
         res,
         {},
@@ -308,6 +312,8 @@ export class TeamsController {
         TEAM_SUCCESS_MESSAGES.REMOVE_TEAM_MEMBER_SUCCESS,
       );
     } catch (error) {
+      console.log({ error });
+
       return errorResponse(res);
     }
   };

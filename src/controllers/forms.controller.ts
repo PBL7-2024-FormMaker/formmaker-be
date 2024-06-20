@@ -40,6 +40,7 @@ import {
   findTeamById,
   successResponse,
 } from '../utils';
+import { io } from '..';
 
 let instance: FormsController | null = null;
 
@@ -360,6 +361,8 @@ export class FormsController {
       }
 
       await this.formsService.addFormMember(form.id, foundUser.id);
+
+      io.emit(form.id, 'formMemberUpdate');
 
       return successResponse(
         res,
