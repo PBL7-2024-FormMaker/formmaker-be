@@ -642,6 +642,9 @@ export class FormsController {
         settings,
         elements,
       });
+
+      io.emit(form.id, 'formUpdate');
+
       return successResponse(
         res,
         updatedForm,
