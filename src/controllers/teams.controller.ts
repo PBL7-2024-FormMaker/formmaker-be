@@ -181,7 +181,7 @@ export class TeamsController {
       await this.teamsService.addTeamMember(team.id, foundUser.id);
 
       // Phát sự kiện khi có thay đổi trong danh sách thành viên của team
-      io.emit(team.id, 'teamMemberUpdate');
+      io.to(team.id).emit('teamMemberUpdate');
 
       return successResponse(
         res,

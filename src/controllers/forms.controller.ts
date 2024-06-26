@@ -362,7 +362,7 @@ export class FormsController {
 
       await this.formsService.addFormMember(form.id, foundUser.id);
 
-      io.emit(form.id, 'formMemberUpdate');
+      io.to(form.id).emit('formMemberUpdate');
 
       return successResponse(
         res,
@@ -643,7 +643,7 @@ export class FormsController {
         elements,
       });
 
-      io.emit(form.id, 'formUpdate');
+      io.to(form.id).emit('formUpdate');
 
       return successResponse(
         res,

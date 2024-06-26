@@ -72,6 +72,14 @@ app.use((req: Request, res: Response) =>
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  socket.on('joinRoom', (id) => {
+    socket.join(id);
+  });
+
+  socket.on('leaveRoom', (id) => {
+    socket.leave(id);
+  });
+
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
